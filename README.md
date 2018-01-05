@@ -1,2 +1,1 @@
-# dinewell-carehome-app
-Android app for Dinewell Carehome
+# Dinewell Carehome App
