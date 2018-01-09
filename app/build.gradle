@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'kotlin-android-extensions'
@@ -9,9 +8,6 @@ buildscript {
         jcenter()
         mavenCentral()
         google()
-    }
-    dependencies {
-        classpath 'me.tatarka:gradle-retrolambda:3.7.0'
     }
 }
 
@@ -23,17 +19,12 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
     defaultConfig {
-        applicationId "uk.co.mycompany"
+        applicationId "com.blackcrowsys"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        javaCompileOptions {
-            annotationProcessorOptions {
-                arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
-            }
-        }
     }
     buildTypes {
         release {
@@ -53,10 +44,9 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+    implementation "android.arch.lifecycle:extensions:$rootProject.architectureComponentsVersion"
+    kapt "android.arch.lifecycle:compiler:$rootProject.architectureComponentsVersion"
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation "android.arch.persistence.room:runtime:$rootProject.architectureComponentsVersion"
-    kapt "android.arch.persistence.room:compiler:$rootProject.architectureComponentsVersion"
-    implementation "android.arch.persistence.room:rxjava2:$rootProject.architectureComponentsVersion"
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.rxkotlinVersion"
@@ -75,6 +65,8 @@ dependencies {
     implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion"
     provided 'org.glassfish:javax.annotation:10.0-b28'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
+    implementation "com.facebook.fresco:fresco:1.7.1"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-inline:2.11.0'
