@@ -1,4 +1,4 @@
-package com.blackcrowsys.ui.main
+package com.blackcrowsys.ui.login
 
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
@@ -11,14 +11,16 @@ import io.reactivex.rxkotlin.subscribeBy
 
 import com.blackcrowsys.R
 import com.blackcrowsys.ui.ViewModelFactory
+import com.facebook.imagepipeline.request.ImageRequestBuilder
 import dagger.android.AndroidInjection
+import kotlinx.android.synthetic.main.activity_login.*
 import javax.inject.Inject
 
-class MainActivity: AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     companion object {
-        fun startMainActivity(initialContext: Context) {
-            val intent = Intent(initialContext, MainActivity::class.java)
+        fun startLoginActivity(initialContext: Context) {
+            val intent = Intent(initialContext, LoginActivity::class.java)
             initialContext.startActivity(intent)
         }
     }
@@ -27,20 +29,23 @@ class MainActivity: AppCompatActivity() {
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
 
-    private lateinit var mainActivityViewModel: MainActivityViewModel
+    private lateinit var loginActivityViewModel: LoginActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
-        mainActivityViewModel = ViewModelProviders.of(this, viewModelFactory).get(MainActivityViewModel::class.java)
+//        val imageRequest = ImageRequestBuilder.newBuilderWithResourceId(R.mipmap.dinewell_logo_blue_green).build()
+//        ivDinewellImage.setImageURI(imageRequest.sourceUri)
 
-        compositeDisposable.add(mainActivityViewModel.showDataFromApi()
+        loginActivityViewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginActivityViewModel::class.java)
+
+        compositeDisposable.add(loginActivityViewModel.showDataFromApi()
                 .subscribeBy(onSuccess = {
-                    Log.d("MainActivity", it.ip)
+                    Log.d("LoginActivity", it.ip)
                 }, onError = {
-                    Log.d("MainActivity", it.message)
+                    Log.d("LoginActivity", it.message)
                 }))
     }
 

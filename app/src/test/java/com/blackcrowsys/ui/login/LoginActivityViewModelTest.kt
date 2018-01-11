@@ -1,4 +1,4 @@
-package com.blackcrowsys.ui.main
+package com.blackcrowsys.ui.login
 
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -13,21 +13,21 @@ import com.blackcrowsys.repository.Repository
 import com.blackcrowsys.util.SchedulerProvider
 
 /**
- * Unit test for [MainActivityViewModel].
+ * Unit test for [LoginActivityViewModel].
  */
-class MainActivityViewModelTest {
+class LoginActivityViewModelTest {
 
     @Mock
     private lateinit var mockRepository: Repository
 
     private val schedulerProvider = SchedulerProvider(Schedulers.trampoline(), Schedulers.trampoline())
 
-    private lateinit var mainActivityViewModel: MainActivityViewModel
+    private lateinit var loginActivityViewModel: LoginActivityViewModel
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        mainActivityViewModel = MainActivityViewModel(mockRepository, schedulerProvider)
+        loginActivityViewModel = LoginActivityViewModel(mockRepository, schedulerProvider)
     }
 
     @Test
@@ -36,7 +36,7 @@ class MainActivityViewModelTest {
 
         val testObserver = TestObserver<IpAddress>()
 
-        mainActivityViewModel.showDataFromApi()
+        loginActivityViewModel.showDataFromApi()
                 .subscribe(testObserver)
 
         testObserver.assertNoErrors()
