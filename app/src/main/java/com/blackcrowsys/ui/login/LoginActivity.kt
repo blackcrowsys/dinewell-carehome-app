@@ -6,13 +6,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import com.blackcrowsys.R
+import com.blackcrowsys.exceptions.ExceptionTransformer
+import com.blackcrowsys.ui.ViewModelFactory
+import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
-
-import com.blackcrowsys.R
-import com.blackcrowsys.ui.ViewModelFactory
-import com.facebook.imagepipeline.request.ImageRequestBuilder
-import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_login.*
 import javax.inject.Inject
 
@@ -28,6 +27,7 @@ class LoginActivity : AppCompatActivity() {
     private val compositeDisposable by lazy { CompositeDisposable() }
 
     @Inject lateinit var viewModelFactory: ViewModelFactory
+    @Inject lateinit var exceptionTransformer: ExceptionTransformer
 
     private lateinit var loginActivityViewModel: LoginActivityViewModel
 
@@ -36,17 +36,21 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-//        val imageRequest = ImageRequestBuilder.newBuilderWithResourceId(R.mipmap.dinewell_logo_blue_green).build()
-//        ivDinewellImage.setImageURI(imageRequest.sourceUri)
-
         loginActivityViewModel = ViewModelProviders.of(this, viewModelFactory).get(LoginActivityViewModel::class.java)
+        //httpInterceptor.url = "http://ip.jsontest.com/"
 
-        compositeDisposable.add(loginActivityViewModel.showDataFromApi()
-                .subscribeBy(onSuccess = {
-                    Log.d("LoginActivity", it.ip)
-                }, onError = {
-                    Log.d("LoginActivity", it.message)
-                }))
+        btnLogin.setOnClickListener { _ ->
+            compositeDisposable.add(
+                    loginActivityViewModel.isUrlValid(etUrlView.text.toString())
+                            .flatMap { _ -> loginActivityViewModel.showDataFromApi() }
+                            .compose(exceptionTransformer.mapExceptionsForSingle())
+                            .subscribeBy(onSuccess = {
+                                Log.d("LoginActivity", it.ip)
+                            }, onError = {
+                                Log.d("LoginActivity", "" + it.message)
+                            })
+            )
+        }
     }
 
     override fun onDestroy() {

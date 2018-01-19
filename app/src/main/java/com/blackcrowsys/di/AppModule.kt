@@ -15,11 +15,17 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import com.blackcrowsys.api.ApiService
+import com.blackcrowsys.exceptions.ErrorMapper
+import com.blackcrowsys.exceptions.ExceptionTransformer
+import com.blackcrowsys.api.util.HttpInterceptor
 import com.blackcrowsys.util.SchedulerProvider
+import com.f2prateek.rx.preferences2.RxSharedPreferences
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
+import android.preference.PreferenceManager
+import com.blackcrowsys.util.SharedPreferencesHandler
 
 @Module
 class AppModule {
@@ -37,7 +43,20 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(application: Application): OkHttpClient {
+    fun provideSharedPreferencesHandler(application: Application): SharedPreferencesHandler {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(application)
+        return SharedPreferencesHandler(RxSharedPreferences.create(preferences))
+    }
+
+    @Provides
+    @Singleton
+    fun provideHttpInterceptorBaseUrl(sharedPreferencesHandler: SharedPreferencesHandler): HttpInterceptor {
+        return HttpInterceptor(sharedPreferencesHandler)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(application: Application, httpInterceptor: HttpInterceptor): OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BASIC
 
@@ -50,6 +69,7 @@ class AppModule {
                 .connectTimeout(30, TimeUnit.SECONDS)
                 .readTimeout(60, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
+                .addInterceptor(httpInterceptor)
                 .addInterceptor(interceptor)
                 .build()
     }
@@ -58,10 +78,17 @@ class AppModule {
     @Singleton
     fun provideApiService(gson: Gson, okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
-                .baseUrl("http://ip.jsontest.com/")
+                .baseUrl("http://localhost")
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .client(okHttpClient)
                 .build().create(ApiService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideExceptionTransformer(application: Application): ExceptionTransformer {
+        val errorMapper = ErrorMapper(application)
+        return ExceptionTransformer(errorMapper)
     }
 }
