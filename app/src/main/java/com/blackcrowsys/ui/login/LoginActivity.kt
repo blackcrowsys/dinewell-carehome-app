@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.blackcrowsys.R
 import com.blackcrowsys.exceptions.ExceptionTransformer
+import com.blackcrowsys.functionextensions.getFieldValue
 import com.blackcrowsys.ui.ViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
@@ -43,8 +44,8 @@ class LoginActivity : AppCompatActivity() {
 
         btnLogin.setOnClickListener { _ ->
             compositeDisposable.add(
-                loginActivityViewModel.areUsernamePasswordNotEmpty(etUsernameView.text.toString(), etPasswordView.text.toString())
-                    .flatMap { _ -> loginActivityViewModel.isUrlValid(etUrlView.text.toString()) }
+                loginActivityViewModel.areUsernamePasswordNotEmpty(etUsernameView.getFieldValue(), etPasswordView.getFieldValue())
+                    .flatMap { _ -> loginActivityViewModel.isUrlValid(etUrlView.getFieldValue()) }
                     .flatMap { _ -> loginActivityViewModel.showDataFromApi() }
                     .compose(exceptionTransformer.mapExceptionsForSingle())
                     .subscribeBy(onSuccess = {
