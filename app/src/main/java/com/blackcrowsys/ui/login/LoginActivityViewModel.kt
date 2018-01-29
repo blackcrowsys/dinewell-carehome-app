@@ -3,6 +3,7 @@ package com.blackcrowsys.ui.login
 import android.arch.lifecycle.ViewModel
 import io.reactivex.Single
 import com.blackcrowsys.api.model.IpAddress
+import com.blackcrowsys.exceptions.EmptyUsernamePasswordException
 import com.blackcrowsys.exceptions.InvalidUrlException
 import com.blackcrowsys.repository.Repository
 import com.blackcrowsys.util.SchedulerProvider
@@ -17,6 +18,12 @@ class LoginActivityViewModel(private val repository: Repository,
             sharedPreferencesHandler.setEndpointUrl(url)
             Single.just(true)
         } else Single.error(InvalidUrlException())
+    }
+
+    fun areUsernamePasswordNotEmpty(username: String, password: String): Single<Boolean> {
+        return if (username.isNotBlank() && password.isNotBlank()) {
+            Single.just(true)
+        } else Single.error(EmptyUsernamePasswordException())
     }
 
     fun showDataFromApi(): Single<IpAddress> = repository.getDataFromApi()

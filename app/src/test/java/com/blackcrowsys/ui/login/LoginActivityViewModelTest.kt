@@ -9,6 +9,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import com.blackcrowsys.api.model.IpAddress
+import com.blackcrowsys.exceptions.EmptyUsernamePasswordException
 import com.blackcrowsys.exceptions.InvalidUrlException
 import com.blackcrowsys.repository.Repository
 import com.blackcrowsys.util.SchedulerProvider
@@ -50,7 +51,7 @@ class LoginActivityViewModelTest {
     }
 
     @Test
-    fun isUrlValidWhenUrlIsEmpty() {
+    fun `isUrlValid when url is empty`() {
         val testObserver = TestObserver<Boolean>()
 
         loginActivityViewModel.isUrlValid("")
@@ -60,7 +61,7 @@ class LoginActivityViewModelTest {
     }
 
     @Test
-    fun isUrlValidWhenUrlIsInvalid() {
+    fun `isUrlValidWhenUrl when url is invalid`() {
         val testObserver = TestObserver<Boolean>()
 
         loginActivityViewModel.isUrlValid("ftp://dot.net")
@@ -70,13 +71,44 @@ class LoginActivityViewModelTest {
     }
 
     @Test
-    fun isUrlValidWhenUrlIsValid() {
+    fun `isUrlValid when url is valid`() {
         val testObserver = TestObserver<Boolean>()
 
         loginActivityViewModel.isUrlValid("https://www.endpoint.com/")
                 .subscribe(testObserver)
 
         verify(mockSharedPreferencesHandler).setEndpointUrl("https://www.endpoint.com/")
+
+        testObserver.assertNoErrors()
+        testObserver.assertValue { result -> result }
+    }
+
+    @Test
+    fun `areUsernamePasswordNotEmpty when username is empty`() {
+        val testObserver = TestObserver<Boolean>()
+
+        loginActivityViewModel.areUsernamePasswordNotEmpty("", "password")
+            .subscribe(testObserver)
+
+        testObserver.assertError(EmptyUsernamePasswordException::class.java)
+    }
+
+    @Test
+    fun `areUsernamePasswordNotEmpty when password is empty`() {
+        val testObserver = TestObserver<Boolean>()
+
+        loginActivityViewModel.areUsernamePasswordNotEmpty("username", "")
+            .subscribe(testObserver)
+
+        testObserver.assertError(EmptyUsernamePasswordException::class.java)
+    }
+
+    @Test
+    fun `areUsernamePasswordNotEmpty when username and password entered`() {
+        val testObserver = TestObserver<Boolean>()
+
+        loginActivityViewModel.areUsernamePasswordNotEmpty("username", "password")
+            .subscribe(testObserver)
 
         testObserver.assertNoErrors()
         testObserver.assertValue { result -> result }

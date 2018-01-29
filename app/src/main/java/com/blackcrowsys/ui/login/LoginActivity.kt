@@ -26,8 +26,10 @@ class LoginActivity : AppCompatActivity() {
 
     private val compositeDisposable by lazy { CompositeDisposable() }
 
-    @Inject lateinit var viewModelFactory: ViewModelFactory
-    @Inject lateinit var exceptionTransformer: ExceptionTransformer
+    @Inject
+    lateinit var viewModelFactory: ViewModelFactory
+    @Inject
+    lateinit var exceptionTransformer: ExceptionTransformer
 
     private lateinit var loginActivityViewModel: LoginActivityViewModel
 
@@ -41,14 +43,15 @@ class LoginActivity : AppCompatActivity() {
 
         btnLogin.setOnClickListener { _ ->
             compositeDisposable.add(
-                    loginActivityViewModel.isUrlValid(etUrlView.text.toString())
-                            .flatMap { _ -> loginActivityViewModel.showDataFromApi() }
-                            .compose(exceptionTransformer.mapExceptionsForSingle())
-                            .subscribeBy(onSuccess = {
-                                Log.d("LoginActivity", it.ip)
-                            }, onError = {
-                                Log.d("LoginActivity", "" + it.message)
-                            })
+                loginActivityViewModel.areUsernamePasswordNotEmpty(etUsernameView.text.toString(), etPasswordView.text.toString())
+                    .flatMap { _ -> loginActivityViewModel.isUrlValid(etUrlView.text.toString()) }
+                    .flatMap { _ -> loginActivityViewModel.showDataFromApi() }
+                    .compose(exceptionTransformer.mapExceptionsForSingle())
+                    .subscribeBy(onSuccess = {
+                        Log.d("LoginActivity", it.ip)
+                    }, onError = {
+                        Log.d("LoginActivity", "" + it.message)
+                    })
             )
         }
     }
