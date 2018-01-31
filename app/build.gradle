@@ -36,6 +36,14 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    aaptOptions {
+        cruncherEnabled = false
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -66,12 +74,13 @@ dependencies {
     implementation "com.google.dagger:dagger-android:$rootProject.daggerVersion"
     kapt "com.google.dagger:dagger-android-processor:$rootProject.daggerVersion"
     implementation "com.google.dagger:dagger-android-support:$rootProject.daggerVersion"
-    provided 'org.glassfish:javax.annotation:10.0-b28'
+    compileOnly 'org.glassfish:javax.annotation:10.0-b28'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
 
     implementation "com.facebook.fresco:fresco:1.7.1"
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-inline:2.11.0'
+    testImplementation "org.robolectric:robolectric:3.6.1"
 }
 

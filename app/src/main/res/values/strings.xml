@@ -12,4 +12,5 @@
     <string name="unknown_error">Unknown Error</string>
     <string name="empty_username_password_error">The username or password was empty</string>
     <string name="url_invalid_error">Please ensure you have typed a valid URL</string>
+    <string name="incorrect_login_details">The login details are incorrect. Please try again</string>
 </resources>
