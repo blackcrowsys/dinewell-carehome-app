@@ -1,6 +1,7 @@
 package com.blackcrowsys.di
 
 import android.app.Application
+import android.arch.persistence.room.Room
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -25,6 +26,8 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import android.preference.PreferenceManager
+import com.blackcrowsys.persistence.UserAccessDatabase
+import com.blackcrowsys.persistence.dao.UserPermissionDao
 import com.blackcrowsys.util.SharedPreferencesHandler
 
 @Module
@@ -91,4 +94,13 @@ class AppModule {
         val errorMapper = ErrorMapper(application)
         return ExceptionTransformer(errorMapper)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserPermissionsDatabase(application: Application): UserAccessDatabase =
+            Room.databaseBuilder(application, UserAccessDatabase::class.java, "useraccess.db").build()
+
+    @Provides
+    @Singleton
+    fun provideUserPermissionDao(userAccessDatabase: UserAccessDatabase): UserPermissionDao = userAccessDatabase.userPermissionDao()
 }

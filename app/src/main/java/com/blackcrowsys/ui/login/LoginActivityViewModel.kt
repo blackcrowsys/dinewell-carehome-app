@@ -1,8 +1,9 @@
 package com.blackcrowsys.ui.login
 
 import android.arch.lifecycle.ViewModel
+import com.blackcrowsys.api.models.AuthenticationRequest
+import com.blackcrowsys.api.models.AuthenticationResponse
 import io.reactivex.Single
-import com.blackcrowsys.api.model.IpAddress
 import com.blackcrowsys.exceptions.EmptyUsernamePasswordException
 import com.blackcrowsys.exceptions.InvalidUrlException
 import com.blackcrowsys.repository.Repository
@@ -26,6 +27,6 @@ class LoginActivityViewModel(private val repository: Repository,
         } else Single.error(EmptyUsernamePasswordException())
     }
 
-    fun showDataFromApi(): Single<IpAddress> = repository.getDataFromApi()
-            .compose(schedulerProvider.getSchedulersForSingle())
+    fun authenticateWithApi(authenticationRequest: AuthenticationRequest): Single<AuthenticationResponse>
+            = repository.login(authenticationRequest).compose(schedulerProvider.getSchedulersForSingle())
 }

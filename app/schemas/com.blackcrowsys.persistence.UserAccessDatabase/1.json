@@ -1,0 +1,54 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "ba26830d17c896360cd1eca4b31048d1",
+    "entities": [
+      {
+        "tableName": "UserPermission",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `application` TEXT NOT NULL, `access` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "application",
+            "columnName": "application",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "access",
+            "columnName": "access",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [
+          {
+            "name": "index_UserPermission_application",
+            "unique": true,
+            "columnNames": [
+              "application"
+            ],
+            "createSql": "CREATE UNIQUE INDEX `index_UserPermission_application` ON `${TABLE_NAME}` (`application`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"ba26830d17c896360cd1eca4b31048d1\")"
+    ]
+  }
+}

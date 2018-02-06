@@ -1,11 +1,13 @@
 package com.blackcrowsys.api
 
+import com.blackcrowsys.api.models.AuthenticationRequest
+import com.blackcrowsys.api.models.AuthenticationResponse
 import io.reactivex.Single
-import retrofit2.http.GET
-import com.blackcrowsys.api.model.IpAddress
+import retrofit2.http.Body
+import retrofit2.http.POST
 
 interface ApiService {
 
-    @GET(".")
-    fun getJsonResponse(): Single<IpAddress>
+    @POST("/authenticate")
+    fun authenticate(@Body authenticationRequest: AuthenticationRequest): Single<AuthenticationResponse>
 }
