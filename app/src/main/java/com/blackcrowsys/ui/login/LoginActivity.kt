@@ -10,7 +10,6 @@ import com.blackcrowsys.R
 import com.blackcrowsys.api.models.AuthenticationRequest
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.getFieldValue
-import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.ui.ViewModelFactory
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
@@ -57,10 +56,6 @@ class LoginActivity : AppCompatActivity() {
                     })
             )
         }
-
-        val encryptor = AESCipher()
-        Log.d("LoginActivity", encryptor.encrypt("1911", "test"))
-        Log.d("LoginActivity", encryptor.decrypt("1911", "zOZjBkHWwQO2Dd3WlZ2HwY3tSr7ETcnVPKLnOP7Mblg="))
     }
 
     override fun onDestroy() {
