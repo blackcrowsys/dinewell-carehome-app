@@ -1,18 +1,20 @@
 package com.blackcrowsys.ui.login
 
+import com.blackcrowsys.api.models.AuthenticationRequest
+import com.blackcrowsys.api.models.AuthenticationResponse
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import com.blackcrowsys.exceptions.EmptyUsernamePasswordException
 import com.blackcrowsys.exceptions.InvalidUrlException
 import com.blackcrowsys.repository.Repository
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
+import org.mockito.Mockito.`when`
 import org.mockito.Mockito.verify
 
 /**
@@ -37,16 +39,21 @@ class LoginActivityViewModelTest {
     }
 
     @Test
-    fun showDataFromApi() {
-//        Mockito.`when`(mockRepository.login()).thenReturn(Single.just(IpAddress("20.0.0.0")))
-//
-//        val testObserver = TestObserver<IpAddress>()
-//
-//        loginActivityViewModel.authenticateWithApi()
-//                .subscribe(testObserver)
-//
-//        testObserver.assertNoErrors()
-//        testObserver.assertValue { ipAddress -> ipAddress.ip == "20.0.0.0" }
+    fun `authenticate With Api`() {
+        `when`(mockRepository.login(AuthenticationRequest("test", "password"))).thenReturn(Single.just(
+            AuthenticationResponse("test", "etxWWKsjakj9ajsE32X=", true,
+                mapOf("Residents" to "Read", "Incidents" to "Read"))
+        ))
+
+        val testObserver = TestObserver<AuthenticationResponse>()
+
+        loginActivityViewModel.authenticateWithApi(AuthenticationRequest("test", "password"))
+            .subscribe(testObserver)
+
+        testObserver.assertNoErrors()
+        testObserver.assertValue { it -> it.jwtToken=="etxWWKsjakj9ajsE32X=" &&
+                it.permissions.containsKey("Residents") &&
+                it.permissions.containsKey("Incidents")}
     }
 
     @Test

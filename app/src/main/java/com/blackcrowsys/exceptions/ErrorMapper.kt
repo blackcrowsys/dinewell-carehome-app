@@ -12,7 +12,7 @@ class ErrorMapper(private val context: Context) {
             is InvalidUrlException -> AppException(context.getString(R.string.url_invalid_error))
             is EmptyUsernamePasswordException -> AppException(context.getString(R.string.empty_username_password_error))
             is HttpException -> transformRetrofitException(throwable)
-            else -> AppException(context.getString(R.string.unknown_error))
+            else -> AppException(context.getString(R.string.unknown_error), throwable.message)
         }
     }
 

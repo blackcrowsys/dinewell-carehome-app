@@ -6,8 +6,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.widget.Toast
 import com.blackcrowsys.R
 import com.blackcrowsys.api.models.AuthenticationRequest
+import com.blackcrowsys.exceptions.AppException
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.getFieldValue
 import com.blackcrowsys.ui.ViewModelFactory
@@ -52,7 +54,9 @@ class LoginActivity : AppCompatActivity() {
                     .subscribeBy(onSuccess = {
                         Log.d("LoginActivity", it.jwtToken)
                     }, onError = {
-                        Log.d("LoginActivity", "" + it.message)
+                        val appException = it as AppException
+                        Log.e("LoginActivity", "${appException.message}. Cause: ${appException.secondaryMessage}")
+                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
                     })
             )
         }

@@ -2,6 +2,7 @@ package com.blackcrowsys.persistence.dao
 
 import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
+import android.arch.persistence.room.OnConflictStrategy
 import android.arch.persistence.room.Query
 import com.blackcrowsys.persistence.entity.UserPermission
 import io.reactivex.Flowable
@@ -12,7 +13,7 @@ import io.reactivex.Flowable
 @Dao
 interface UserPermissionDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun saveUserPermission(userPermission: UserPermission)
 
     @Query("SELECT * FROM UserPermission WHERE application=:application LIMIT 1")
