@@ -13,6 +13,7 @@ import com.blackcrowsys.exceptions.AppException
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.getFieldValue
 import com.blackcrowsys.ui.ViewModelFactory
+import com.blackcrowsys.ui.pin.PINActivity
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -52,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
                     .flatMap { _ -> loginActivityViewModel.authenticateWithApi(AuthenticationRequest(etUsernameView.getFieldValue(), etPasswordView.getFieldValue())) }
                     .compose(exceptionTransformer.mapExceptionsForSingle())
                     .subscribeBy(onSuccess = {
-                        Log.d("LoginActivity", it.jwtToken)
+                        PINActivity.startPINActivityToSetPIN(this)
                     }, onError = {
                         val appException = it as AppException
                         Log.e("LoginActivity", "${appException.message}. Cause: ${appException.secondaryMessage}")

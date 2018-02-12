@@ -89,6 +89,8 @@ dependencies {
 
     implementation "com.facebook.fresco:fresco:1.7.1"
 
+    implementation "com.github.GoodieBag:Pinview:v1.3"
+
     debugImplementation 'com.amitshekhar.android:debug-db:1.0.2'
 
     testImplementation 'junit:junit:4.12'
