@@ -13,6 +13,10 @@
     <string name="empty_username_password_error">The username or password was empty</string>
     <string name="url_invalid_error">Please ensure you have typed a valid URL</string>
     <string name="incorrect_login_details">The login details are incorrect. Please try again</string>
+    <string name="pin_contains_same_characters_error">The PIN contains the same characters. Please choose another PIN.</string>
+    <string name="confirmed_pin_does_not_match_error">The PINs entered do not match. Please try again.</string>
+
+    <!-- Strings related to PIN Activity -->
     <string name="please_enter_pin">Please create a 4 digit PIN. You will use this PIN to login.</string>
     <string name="please_confirm_pin">Please confirm your PIN</string>
     <string name="reset_pin">Reset PIN</string>

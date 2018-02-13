@@ -18,3 +18,7 @@ fun String.hashString(): String {
     }
     return buffer.toString()
 }
+
+fun String.containSameCharacters(): Boolean {
+    return this.indices.none { this[it] != this[0] }
+}

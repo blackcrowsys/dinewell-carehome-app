@@ -27,6 +27,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        app:cursorVisible="true"
+        app:forceKeyboard="true"
         app:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,6 +39,7 @@
         app:pinWidth="40dp" />
 
     <ImageButton
+        android:id="@+id/btnCloseConfirmation"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
@@ -64,6 +67,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        app:cursorVisible="true"
+        app:forceKeyboard="true"
         app:inputType="number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,17 +79,19 @@
         app:pinWidth="40dp" />
 
     <ImageButton
-        android:layout_marginStart="3dp"
+        android:id="@+id/btnInfo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
         android:background="@color/white"
+        android:contentDescription="@string/information_icon"
         android:src="@drawable/ic_info_outline_black"
-        app:layout_constraintTop_toTopOf="@id/pvSecond"
-        app:layout_constraintStart_toEndOf="@id/pvSecond"
         app:layout_constraintBottom_toBottomOf="@id/pvSecond"
-        android:contentDescription="@string/information_icon" />
+        app:layout_constraintStart_toEndOf="@id/pvSecond"
+        app:layout_constraintTop_toTopOf="@id/pvSecond" />
 
     <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSavePin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_done_white"
