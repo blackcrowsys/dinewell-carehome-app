@@ -4,11 +4,14 @@ import com.blackcrowsys.exceptions.ConfirmedPinDoesNotMatchException
 import com.blackcrowsys.exceptions.PinContainsSameCharactersException
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
+import io.reactivex.Observable
 import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
 import org.junit.Before
 import org.junit.Test
 import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.doNothing
 import org.mockito.MockitoAnnotations
 
 class PINActivityViewModelTest {
@@ -77,5 +80,35 @@ class PINActivityViewModelTest {
             .subscribe(testObserver)
 
         testObserver.assertError(ConfirmedPinDoesNotMatchException::class.java)
+    }
+
+    @Test
+    fun `savePinHash with hash`() {
+        val hashString = "cwKKSjsdAAndi9!lksk="
+        doNothing().`when`(mockSharedPreferencesHandler).setPinHash(hashString)
+        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(hashString))
+
+        val testObserver = TestObserver<String>()
+        pinActivityViewModel.savePinHash(hashString)
+            .subscribe(testObserver)
+
+        testObserver.assertNoErrors()
+        testObserver.assertValue { it == hashString }
+    }
+
+    @Test
+    fun `savePinHash with bad hash`() {
+        val hashString = "cwKKSjsdAAndi9!lksk="
+        val alteredHash = "cwKKSjsdAAndi9"
+        doNothing().`when`(mockSharedPreferencesHandler).setPinHash(hashString)
+        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(alteredHash))
+
+        val testObserver = TestObserver<String>()
+        pinActivityViewModel.savePinHash(hashString)
+            .subscribe(testObserver)
+
+        testObserver.assertNoErrors()
+        testObserver.assertNoValues()
+        testObserver.assertComplete()
     }
 }

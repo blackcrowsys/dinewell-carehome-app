@@ -4,15 +4,19 @@ import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import com.blackcrowsys.R
 import com.blackcrowsys.exceptions.ExceptionTransformer
+import com.blackcrowsys.functionextensions.hashString
 import com.blackcrowsys.functionextensions.hideSoftKeyboard
 import com.blackcrowsys.functionextensions.showShortToastText
 import com.blackcrowsys.ui.ViewModelFactory
 import dagger.android.AndroidInjection
+import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_pin.*
@@ -78,9 +82,41 @@ class PINActivity : AppCompatActivity() {
                         hideSoftKeyboard()
                         showCompleteFloatingButton()
                         pvSecond.clearFocus()
-                        Log.d("PINActivity", pinView.value)
                     }, onError = {
                         showShortToastText(it.message)
+                    })
+            )
+        }
+
+        btnCloseConfirmation.setOnClickListener {
+            showFirstPinLevelAgain()
+        }
+
+        btnInfo.setOnClickListener {
+            SimpleTooltip.Builder(this@PINActivity)
+                .anchorView(btnInfo)
+                .text(R.string.pin_tooltip_text)
+                .gravity(Gravity.TOP)
+                .animated(true)
+                .backgroundColor(ContextCompat.getColor(this@PINActivity, R.color.black))
+                .arrowColor(ContextCompat.getColor(this@PINActivity, R.color.black))
+                .textColor(ContextCompat.getColor(this@PINActivity, R.color.white))
+                .padding(R.dimen.tooltip_padding)
+                .transparentOverlay(true)
+                .animationDuration(500)
+                .dismissOnOutsideTouch(true)
+                .dismissOnInsideTouch(true)
+                .build()
+                .show()
+        }
+
+        fabSavePin.setOnClickListener {
+            compositeDisposable.add(
+                pinActivityViewModel.savePinHash(pvSecond.value.hashString())
+                    .subscribeBy(onNext = {
+                        Log.d("PINActivity", "Hash $it")
+                    }, onError = {
+                        Log.e("PINActivity", "Error ${it.message}")
                     })
             )
         }
@@ -103,6 +139,15 @@ class PINActivity : AppCompatActivity() {
     private fun hideFirstPinLevel() {
         tvEnterPinMessage.alpha = 0.1f
         pvFirst.alpha = 0.1f
+    }
+
+    private fun showFirstPinLevelAgain() {
+        tvEnterPinMessage.alpha = 1.0f
+        pvFirst.alpha = 1.0f
+        pvFirst.clearValue()
+        pvSecond.clearValue()
+        initialUiState()
+        pvFirst.requestPinEntryFocus()
     }
 
     private fun showSecondPinLevel() {

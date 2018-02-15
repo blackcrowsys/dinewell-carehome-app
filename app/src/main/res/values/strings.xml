@@ -23,4 +23,5 @@
     <string name="confirm_pin">Confirm PIN</string>
     <string name="clear_pin">Clear the PIN</string>
     <string name="information_icon">Information button</string>
+    <string name="pin_tooltip_text">Click the cross to redo your PIN. When both PINS match, hit the green button below.</string>
 </resources>

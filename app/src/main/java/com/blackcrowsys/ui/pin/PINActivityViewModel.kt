@@ -6,6 +6,7 @@ import com.blackcrowsys.exceptions.PinContainsSameCharactersException
 import com.blackcrowsys.functionextensions.containSameCharacters
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
+import io.reactivex.Observable
 import io.reactivex.Single
 
 class PINActivityViewModel(
@@ -31,5 +32,12 @@ class PINActivityViewModel(
         } else {
             Single.error(ConfirmedPinDoesNotMatchException())
         }
+    }
+
+    fun savePinHash(hashString: String): Observable<String> {
+        sharedPreferencesHandler.setPinHash(hashString)
+        return sharedPreferencesHandler.getPinHash()
+            .filter { it -> it == hashString }
+            .compose(schedulerProvider.getSchedulersForObservable())
     }
 }

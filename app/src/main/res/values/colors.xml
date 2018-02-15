@@ -5,7 +5,9 @@
     <color name="colorAccent">#8BC34A</color>
     <color name="colourPrimaryLight">#BBDEFB</color>
     <color name="white">#FFFFFF</color>
+    <color name="background">#FAFAFA</color>
     <color name="dividerColour">#BDBDBD</color>
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#757575</color>
+    <color name="black">#000000</color>
 </resources>
