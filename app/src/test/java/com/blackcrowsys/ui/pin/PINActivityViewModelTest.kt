@@ -2,6 +2,7 @@ package com.blackcrowsys.ui.pin
 
 import com.blackcrowsys.exceptions.ConfirmedPinDoesNotMatchException
 import com.blackcrowsys.exceptions.PinContainsSameCharactersException
+import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import io.reactivex.Observable
@@ -19,6 +20,9 @@ class PINActivityViewModelTest {
     @Mock
     private lateinit var mockSharedPreferencesHandler: SharedPreferencesHandler
 
+    @Mock
+    private lateinit var mockAESCipher: AESCipher
+
     private val schedulerProvider =
         SchedulerProvider(Schedulers.trampoline(), Schedulers.trampoline())
 
@@ -27,7 +31,8 @@ class PINActivityViewModelTest {
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        pinActivityViewModel = PINActivityViewModel(schedulerProvider, mockSharedPreferencesHandler)
+        pinActivityViewModel =
+                PINActivityViewModel(schedulerProvider, mockSharedPreferencesHandler, mockAESCipher)
     }
 
     @Test
@@ -97,18 +102,24 @@ class PINActivityViewModelTest {
     }
 
     @Test
-    fun `savePinHash with bad hash`() {
-        val hashString = "cwKKSjsdAAndi9!lksk="
-        val alteredHash = "cwKKSjsdAAndi9"
-        doNothing().`when`(mockSharedPreferencesHandler).setPinHash(hashString)
-        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(alteredHash))
+    fun `saveJwtTokenUsingPin given a PIN`() {
+        val pin = "1112"
+        val jwtToken = "JWT weeksja2jadjJJSkaj3jJAs09KAs="
+        val encryptedJwtToken = "zAAjkjsd9012jiA!odkas"
+
+        `when`(mockAESCipher.encrypt(pin, jwtToken)).thenReturn(encryptedJwtToken)
+        doNothing().`when`(mockSharedPreferencesHandler).setEncryptedJwtToken(encryptedJwtToken)
+        `when`(mockSharedPreferencesHandler.getEncryptedJwtToken()).thenReturn(
+            Observable.just(
+                encryptedJwtToken
+            )
+        )
 
         val testObserver = TestObserver<String>()
-        pinActivityViewModel.savePinHash(hashString)
+        pinActivityViewModel.saveJwtTokenUsingPin(pin, jwtToken)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
-        testObserver.assertNoValues()
-        testObserver.assertComplete()
+        testObserver.assertValue { it == encryptedJwtToken }
     }
 }

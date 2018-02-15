@@ -22,15 +22,16 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_pin.*
 import javax.inject.Inject
 
-
 const val SET_PIN_INTENT_EXTRA = "set_pin_extra"
+const val JWT_TOKEN_INTENT_EXTRA = "jwt_token_extra"
 
 class PINActivity : AppCompatActivity() {
 
     companion object {
-        fun startPINActivityToSetPIN(initialContext: Context) {
+        fun startPINActivityToSetPIN(initialContext: Context, jwtToken: String) {
             val intent = Intent(initialContext, PINActivity::class.java)
             intent.putExtra(SET_PIN_INTENT_EXTRA, true)
+            intent.putExtra(JWT_TOKEN_INTENT_EXTRA, jwtToken)
             initialContext.startActivity(intent)
         }
 
@@ -113,8 +114,14 @@ class PINActivity : AppCompatActivity() {
         fabSavePin.setOnClickListener {
             compositeDisposable.add(
                 pinActivityViewModel.savePinHash(pvSecond.value.hashString())
+                    .flatMap { _ ->
+                        pinActivityViewModel.saveJwtTokenUsingPin(
+                            pvSecond.value,
+                            intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
+                        )
+                    }
                     .subscribeBy(onNext = {
-                        Log.d("PINActivity", "Hash $it")
+                        Log.d("PINActivity", "Encrypted JWT token $it")
                     }, onError = {
                         Log.e("PINActivity", "Error ${it.message}")
                     })

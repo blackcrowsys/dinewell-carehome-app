@@ -4,6 +4,7 @@ import android.arch.lifecycle.ViewModel
 import com.blackcrowsys.exceptions.ConfirmedPinDoesNotMatchException
 import com.blackcrowsys.exceptions.PinContainsSameCharactersException
 import com.blackcrowsys.functionextensions.containSameCharacters
+import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import io.reactivex.Observable
@@ -11,7 +12,8 @@ import io.reactivex.Single
 
 class PINActivityViewModel(
     private val schedulerProvider: SchedulerProvider,
-    private val sharedPreferencesHandler: SharedPreferencesHandler
+    private val sharedPreferencesHandler: SharedPreferencesHandler,
+    private val aesCipher: AESCipher
 ) : ViewModel() {
 
     fun validatePin(pin: String): Single<Boolean> {
@@ -37,7 +39,12 @@ class PINActivityViewModel(
     fun savePinHash(hashString: String): Observable<String> {
         sharedPreferencesHandler.setPinHash(hashString)
         return sharedPreferencesHandler.getPinHash()
-            .filter { it -> it == hashString }
+            .compose(schedulerProvider.getSchedulersForObservable())
+    }
+
+    fun saveJwtTokenUsingPin(pin: String, jwtToken: String): Observable<String> {
+        sharedPreferencesHandler.setEncryptedJwtToken(aesCipher.encrypt(pin, jwtToken))
+        return sharedPreferencesHandler.getEncryptedJwtToken()
             .compose(schedulerProvider.getSchedulersForObservable())
     }
 }

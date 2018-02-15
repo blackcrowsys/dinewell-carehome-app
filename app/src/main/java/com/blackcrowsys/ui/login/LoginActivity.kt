@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
                     .flatMap { _ -> loginActivityViewModel.authenticateWithApi(AuthenticationRequest(etUsernameView.getFieldValue(), etPasswordView.getFieldValue())) }
                     .compose(exceptionTransformer.mapExceptionsForSingle())
                     .subscribeBy(onSuccess = {
-                        PINActivity.startPINActivityToSetPIN(this)
+                        PINActivity.startPINActivityToSetPIN(this, it.jwtToken)
                     }, onError = {
                         val appException = it as AppException
                         Log.e("LoginActivity", "${appException.message}. Cause: ${appException.secondaryMessage}")
