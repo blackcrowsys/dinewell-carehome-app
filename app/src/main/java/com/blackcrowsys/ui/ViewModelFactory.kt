@@ -5,7 +5,8 @@ import android.arch.lifecycle.ViewModelProvider
 import com.blackcrowsys.repository.Repository
 import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.ui.login.LoginActivityViewModel
-import com.blackcrowsys.ui.pin.PINActivityViewModel
+import com.blackcrowsys.ui.login.LoginWithPINActivityViewModel
+import com.blackcrowsys.ui.pin.SetPINActivityViewModel
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import javax.inject.Inject
@@ -20,11 +21,22 @@ class ViewModelFactory @Inject constructor(private val repository: Repository,
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(LoginActivityViewModel::class.java)) {
-            return LoginActivityViewModel(repository, schedulerProvider, sharedPreferencesHandler) as T
-        } else if (modelClass.isAssignableFrom(PINActivityViewModel::class.java)) {
-            return PINActivityViewModel(schedulerProvider, sharedPreferencesHandler, aesCipher) as T
+        return when {
+            modelClass.isAssignableFrom(LoginActivityViewModel::class.java) -> LoginActivityViewModel(
+                repository,
+                schedulerProvider,
+                sharedPreferencesHandler
+            ) as T
+            modelClass.isAssignableFrom(SetPINActivityViewModel::class.java) -> SetPINActivityViewModel(
+                schedulerProvider,
+                sharedPreferencesHandler,
+                aesCipher
+            ) as T
+            modelClass.isAssignableFrom(LoginWithPINActivityViewModel::class.java) -> LoginWithPINActivityViewModel(
+                schedulerProvider,
+                sharedPreferencesHandler
+            ) as T
+            else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

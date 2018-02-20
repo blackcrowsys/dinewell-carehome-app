@@ -22,22 +22,14 @@ import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_pin.*
 import javax.inject.Inject
 
-const val SET_PIN_INTENT_EXTRA = "set_pin_extra"
 const val JWT_TOKEN_INTENT_EXTRA = "jwt_token_extra"
 
-class PINActivity : AppCompatActivity() {
+class SetPINActivity : AppCompatActivity() {
 
     companion object {
-        fun startPINActivityToSetPIN(initialContext: Context, jwtToken: String) {
-            val intent = Intent(initialContext, PINActivity::class.java)
-            intent.putExtra(SET_PIN_INTENT_EXTRA, true)
+        fun startSetPINActivity(initialContext: Context, jwtToken: String) {
+            val intent = Intent(initialContext, SetPINActivity::class.java)
             intent.putExtra(JWT_TOKEN_INTENT_EXTRA, jwtToken)
-            initialContext.startActivity(intent)
-        }
-
-        fun startPINActivityToAuthenticatePIN(initialContext: Context) {
-            val intent = Intent(initialContext, PINActivity::class.java)
-            intent.putExtra(SET_PIN_INTENT_EXTRA, false)
             initialContext.startActivity(intent)
         }
     }
@@ -50,20 +42,22 @@ class PINActivity : AppCompatActivity() {
     @Inject
     lateinit var exceptionTransformer: ExceptionTransformer
 
-    private lateinit var pinActivityViewModel: PINActivityViewModel
+    private lateinit var setPinActivityViewModel: SetPINActivityViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pin)
 
-        pinActivityViewModel =
-                ViewModelProviders.of(this, viewModelFactory).get(PINActivityViewModel::class.java)
+        setPinActivityViewModel =
+                ViewModelProviders.of(this, viewModelFactory)
+                    .get(SetPINActivityViewModel::class.java)
 
         initialUiState()
 
         pvFirst.setPinViewEventListener { pinView, _ ->
-            compositeDisposable.add(pinActivityViewModel.validatePin(pinView.value)
+            compositeDisposable.add(
+                setPinActivityViewModel.validatePin(pinView.value)
                 .compose(exceptionTransformer.mapExceptionsForSingle())
                 .subscribeBy(onSuccess = {
                     hideFirstPinLevel()
@@ -77,7 +71,7 @@ class PINActivity : AppCompatActivity() {
 
         pvSecond.setPinViewEventListener { pinView, _ ->
             compositeDisposable.add(
-                pinActivityViewModel.validateSecondPin(pvFirst.value, pinView.value)
+                setPinActivityViewModel.validateSecondPin(pvFirst.value, pinView.value)
                     .compose(exceptionTransformer.mapExceptionsForSingle())
                     .subscribeBy(onSuccess = {
                         hideSoftKeyboard()
@@ -94,14 +88,14 @@ class PINActivity : AppCompatActivity() {
         }
 
         btnInfo.setOnClickListener {
-            SimpleTooltip.Builder(this@PINActivity)
+            SimpleTooltip.Builder(this@SetPINActivity)
                 .anchorView(btnInfo)
                 .text(R.string.pin_tooltip_text)
                 .gravity(Gravity.TOP)
                 .animated(true)
-                .backgroundColor(ContextCompat.getColor(this@PINActivity, R.color.black))
-                .arrowColor(ContextCompat.getColor(this@PINActivity, R.color.black))
-                .textColor(ContextCompat.getColor(this@PINActivity, R.color.white))
+                .backgroundColor(ContextCompat.getColor(this@SetPINActivity, R.color.black))
+                .arrowColor(ContextCompat.getColor(this@SetPINActivity, R.color.black))
+                .textColor(ContextCompat.getColor(this@SetPINActivity, R.color.white))
                 .padding(R.dimen.tooltip_padding)
                 .transparentOverlay(true)
                 .animationDuration(500)
@@ -113,17 +107,17 @@ class PINActivity : AppCompatActivity() {
 
         fabSavePin.setOnClickListener {
             compositeDisposable.add(
-                pinActivityViewModel.savePinHash(pvSecond.value.hashString())
+                setPinActivityViewModel.savePinHash(pvSecond.value.hashString())
                     .flatMap { _ ->
-                        pinActivityViewModel.saveJwtTokenUsingPin(
+                        setPinActivityViewModel.saveJwtTokenUsingPin(
                             pvSecond.value,
                             intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
                         )
                     }
                     .subscribeBy(onNext = {
-                        Log.d("PINActivity", "Encrypted JWT token $it")
+                        Log.d("SetPINActivity", "Encrypted JWT token $it")
                     }, onError = {
-                        Log.e("PINActivity", "Error ${it.message}")
+                        Log.e("SetPINActivity", "Error ${it.message}")
                     })
             )
         }

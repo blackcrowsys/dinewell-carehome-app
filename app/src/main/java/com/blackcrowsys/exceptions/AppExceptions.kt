@@ -12,6 +12,8 @@ class PinContainsSameCharactersException : Exception()
 
 class ConfirmedPinDoesNotMatchException : Exception()
 
+class PinDoesNotContainFourDigitsException : Exception()
+
 class AppException(override val message: String) : Exception(message) {
 
     var secondaryMessage: String? = null

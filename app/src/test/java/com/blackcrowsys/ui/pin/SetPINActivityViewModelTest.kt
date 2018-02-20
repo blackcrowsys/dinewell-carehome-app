@@ -15,7 +15,7 @@ import org.mockito.Mockito.`when`
 import org.mockito.Mockito.doNothing
 import org.mockito.MockitoAnnotations
 
-class PINActivityViewModelTest {
+class SetPINActivityViewModelTest {
 
     @Mock
     private lateinit var mockSharedPreferencesHandler: SharedPreferencesHandler
@@ -26,13 +26,17 @@ class PINActivityViewModelTest {
     private val schedulerProvider =
         SchedulerProvider(Schedulers.trampoline(), Schedulers.trampoline())
 
-    private lateinit var pinActivityViewModel: PINActivityViewModel
+    private lateinit var setPinActivityViewModel: SetPINActivityViewModel
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        pinActivityViewModel =
-                PINActivityViewModel(schedulerProvider, mockSharedPreferencesHandler, mockAESCipher)
+        setPinActivityViewModel =
+                SetPINActivityViewModel(
+                    schedulerProvider,
+                    mockSharedPreferencesHandler,
+                    mockAESCipher
+                )
     }
 
     @Test
@@ -41,7 +45,7 @@ class PINActivityViewModelTest {
 
         val testObserver = TestObserver<Boolean>()
 
-        pinActivityViewModel.validatePin(pin)
+        setPinActivityViewModel.validatePin(pin)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
@@ -54,7 +58,7 @@ class PINActivityViewModelTest {
 
         val testObserver = TestObserver<Boolean>()
 
-        pinActivityViewModel.validatePin(pin)
+        setPinActivityViewModel.validatePin(pin)
             .subscribe(testObserver)
 
         testObserver.assertError(PinContainsSameCharactersException::class.java)
@@ -67,7 +71,7 @@ class PINActivityViewModelTest {
 
         val testObserver = TestObserver<Boolean>()
 
-        pinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
+        setPinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
@@ -81,7 +85,7 @@ class PINActivityViewModelTest {
 
         val testObserver = TestObserver<Boolean>()
 
-        pinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
+        setPinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
             .subscribe(testObserver)
 
         testObserver.assertError(ConfirmedPinDoesNotMatchException::class.java)
@@ -94,7 +98,7 @@ class PINActivityViewModelTest {
         `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(hashString))
 
         val testObserver = TestObserver<String>()
-        pinActivityViewModel.savePinHash(hashString)
+        setPinActivityViewModel.savePinHash(hashString)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
@@ -116,7 +120,7 @@ class PINActivityViewModelTest {
         )
 
         val testObserver = TestObserver<String>()
-        pinActivityViewModel.saveJwtTokenUsingPin(pin, jwtToken)
+        setPinActivityViewModel.saveJwtTokenUsingPin(pin, jwtToken)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()

@@ -4,18 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="16dp"
-    android:paddingEnd="16dp"
-    android:paddingStart="16dp"
-    android:paddingTop="16dp"
-    tools:context="com.blackcrowsys.ui.pin.PINActivity">
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_vertical_margin"
+    android:paddingStart="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_horizontal_margin"
+    tools:context="com.blackcrowsys.ui.pin.SetPINActivity">
 
     <TextView
         android:id="@+id/tvEnterPinMessage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
-        android:text="@string/please_enter_pin"
+        android:text="@string/please_create_pin"
         android:textAlignment="center"
         android:textColor="@color/primaryText"
         android:textSize="16sp"

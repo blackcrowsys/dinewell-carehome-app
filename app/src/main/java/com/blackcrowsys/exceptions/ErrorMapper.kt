@@ -14,6 +14,7 @@ class ErrorMapper(private val context: Context) {
             is HttpException -> transformRetrofitException(throwable)
             is PinContainsSameCharactersException -> AppException(context.getString(R.string.pin_contains_same_characters_error))
             is ConfirmedPinDoesNotMatchException -> AppException(context.getString(R.string.confirmed_pin_does_not_match_error))
+            is PinDoesNotContainFourDigitsException -> AppException(context.getString(R.string.pin_does_not_contain_four_digits_error))
             else -> AppException(context.getString(R.string.unknown_error), throwable.message)
         }
     }

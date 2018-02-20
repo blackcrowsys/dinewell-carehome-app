@@ -10,7 +10,7 @@ import com.blackcrowsys.util.SharedPreferencesHandler
 import io.reactivex.Observable
 import io.reactivex.Single
 
-class PINActivityViewModel(
+class SetPINActivityViewModel(
     private val schedulerProvider: SchedulerProvider,
     private val sharedPreferencesHandler: SharedPreferencesHandler,
     private val aesCipher: AESCipher

@@ -27,7 +27,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.login.LoginActivity" />
-        <activity android:name=".ui.pin.PINActivity" />
+        <activity android:name=".ui.login.LoginWithPINActivity" />
+        <activity android:name=".ui.pin.SetPINActivity" />
     </application>
 
 </manifest>
