@@ -25,10 +25,17 @@
         android:id="@+id/pinView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:cursorVisible="true"
+        app:forceKeyboard="true"
+        app:inputType="number"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:password="true"
+        app:pinHeight="40dp"
+        app:pinLength="4"
+        app:pinWidth="40dp" />
 
     <TextView
         android:id="@+id/tvEnterPinMessage"

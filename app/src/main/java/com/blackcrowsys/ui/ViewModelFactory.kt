@@ -7,6 +7,7 @@ import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.ui.login.LoginActivityViewModel
 import com.blackcrowsys.ui.login.LoginWithPINActivityViewModel
 import com.blackcrowsys.ui.pin.SetPINActivityViewModel
+import com.blackcrowsys.ui.splash.SplashActivityVewModel
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import javax.inject.Inject
@@ -33,6 +34,10 @@ class ViewModelFactory @Inject constructor(private val repository: Repository,
                 aesCipher
             ) as T
             modelClass.isAssignableFrom(LoginWithPINActivityViewModel::class.java) -> LoginWithPINActivityViewModel(
+                schedulerProvider,
+                sharedPreferencesHandler
+            ) as T
+            modelClass.isAssignableFrom(SplashActivityVewModel::class.java) -> SplashActivityVewModel(
                 schedulerProvider,
                 sharedPreferencesHandler
             ) as T

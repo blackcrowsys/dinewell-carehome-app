@@ -77,4 +77,11 @@ class ErrorMapperTest {
 
         assertTrue(transformException.message == RuntimeEnvironment.application.getString(R.string.pin_does_not_contain_four_digits_error))
     }
+
+    @Test
+    fun `transformException when NoPinHasBeenSetException`() {
+        val transformException = errorMapper.transformException(NoPinHasBeenSetException())
+
+        assertTrue(transformException.message == RuntimeEnvironment.application.getString(R.string.no_pin_has_been_set_error))
+    }
 }

@@ -1,5 +1,6 @@
 package com.blackcrowsys.ui.login
 
+import com.blackcrowsys.exceptions.NoPinHasBeenSetException
 import com.blackcrowsys.exceptions.PinDoesNotContainFourDigitsException
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
@@ -91,5 +92,17 @@ class LoginWithPINActivityViewModelTest {
 
         testObserver.assertNoErrors()
         testObserver.assertValue { it -> it }
+    }
+
+    @Test
+    fun `authenticateWithPin when hash does not exist`() {
+        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(""))
+        val pin = "1121"
+        val testObserver = TestObserver<Boolean>()
+
+        loginWithPINActivityViewModel.authenticateWithPin(pin)
+            .subscribe(testObserver)
+
+        testObserver.assertError(NoPinHasBeenSetException::class.java)
     }
 }

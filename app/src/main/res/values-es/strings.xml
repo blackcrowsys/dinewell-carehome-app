@@ -26,4 +26,6 @@
     <string name="pin_tooltip_text">Haga clic en la cruz para rehacer su PIN. Cuando ambos PINS coinciden, presiona el botón verde a continuación.</string>
     <string name="please_enter_pin">Por favor inicie sesión con su PIN de 4 dígitos</string>
     <string name="pin_does_not_contain_four_digits_error">El pin no contiene 4 dígitos</string>
+    <string name="pin_does_not_match">El pin es incorrecto. Inténtalo de nuevo.</string>
+    <string name="no_pin_has_been_set_error">No PIN has been set</string>
 </resources>

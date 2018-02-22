@@ -27,4 +27,6 @@
     <string name="title_activity_login_with_pin">Sign In With PIN</string>
     <string name="please_enter_pin">Please sign in with your 4-digit PIN</string>
     <string name="pin_does_not_contain_four_digits_error">The PIN does not contain 4 digits.</string>
+    <string name="pin_does_not_match">PIN is Incorrect. Please try again.</string>
+    <string name="no_pin_has_been_set_error">No PIN has been set</string>
 </resources>
