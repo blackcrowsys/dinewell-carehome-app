@@ -22,6 +22,7 @@
     <string name="reset_pin">Restablecer PIN</string>
     <string name="confirm_pin">Confirmar PIN</string>
     <string name="clear_pin">Borrar el PIN</string>
+    <string name="title_activity_login_with_pin">Iniciar sesión con un PIN</string>
     <string name="information_icon">Botón de información</string>
     <string name="pin_tooltip_text">Haga clic en la cruz para rehacer su PIN. Cuando ambos PINS coinciden, presiona el botón verde a continuación.</string>
     <string name="please_enter_pin">Por favor inicie sesión con su PIN de 4 dígitos</string>
