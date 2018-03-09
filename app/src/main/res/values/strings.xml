@@ -13,4 +13,20 @@
     <string name="empty_username_password_error">The username or password was empty</string>
     <string name="url_invalid_error">Please ensure you have typed a valid URL</string>
     <string name="incorrect_login_details">The login details are incorrect. Please try again</string>
+    <string name="pin_contains_same_characters_error">The PIN contains the same characters. Please choose another PIN.</string>
+    <string name="confirmed_pin_does_not_match_error">The PINs entered do not match. Please try again.</string>
+
+    <!-- Strings related to PIN Activities -->
+    <string name="please_create_pin">Please create a 4 digit PIN. You will use this PIN to login.</string>
+    <string name="please_confirm_pin">Please confirm your PIN</string>
+    <string name="reset_pin">Reset PIN</string>
+    <string name="confirm_pin">Confirm PIN</string>
+    <string name="clear_pin">Clear the PIN</string>
+    <string name="information_icon">Information button</string>
+    <string name="pin_tooltip_text">Click the cross to redo your PIN. When both PINS match, hit the green button below.</string>
+    <string name="title_activity_login_with_pin">Sign In With PIN</string>
+    <string name="please_enter_pin">Please sign in with your 4-digit PIN</string>
+    <string name="pin_does_not_contain_four_digits_error">The PIN does not contain 4 digits.</string>
+    <string name="pin_does_not_match">PIN is Incorrect. Please try again.</string>
+    <string name="no_pin_has_been_set_error">No PIN has been set</string>
 </resources>

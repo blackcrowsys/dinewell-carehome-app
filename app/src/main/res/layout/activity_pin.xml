@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_vertical_margin"
+    android:paddingStart="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_horizontal_margin"
+    tools:context="com.blackcrowsys.ui.pin.SetPINActivity">
+
+    <TextView
+        android:id="@+id/tvEnterPinMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="8dp"
+        android:text="@string/please_create_pin"
+        android:textAlignment="center"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <com.goodiebag.pinview.Pinview
+        android:id="@+id/pvFirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cursorVisible="true"
+        app:forceKeyboard="true"
+        app:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvEnterPinMessage"
+        app:password="true"
+        app:pinHeight="40dp"
+        app:pinLength="4"
+        app:pinWidth="40dp" />
+
+    <ImageButton
+        android:id="@+id/btnCloseConfirmation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="@color/background"
+        android:contentDescription="@string/clear_pin"
+        android:src="@drawable/ic_clear_black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pvFirst" />
+
+    <TextView
+        android:id="@+id/tvConfirmMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/please_confirm_pin"
+        android:textAlignment="center"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/pvFirst" />
+
+    <com.goodiebag.pinview.Pinview
+        android:id="@+id/pvSecond"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:cursorVisible="true"
+        app:forceKeyboard="true"
+        app:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvConfirmMessage"
+        app:password="true"
+        app:pinHeight="40dp"
+        app:pinLength="4"
+        app:pinWidth="40dp" />
+
+    <ImageButton
+        android:id="@+id/btnInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:background="@color/background"
+        android:contentDescription="@string/information_icon"
+        android:src="@drawable/ic_info_outline_black"
+        app:layout_constraintBottom_toBottomOf="@id/pvSecond"
+        app:layout_constraintStart_toEndOf="@id/pvSecond"
+        app:layout_constraintTop_toTopOf="@id/pvSecond" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabSavePin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_done_white"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

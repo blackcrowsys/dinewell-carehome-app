@@ -6,13 +6,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
-import android.widget.Toast
 import com.blackcrowsys.R
 import com.blackcrowsys.api.models.AuthenticationRequest
 import com.blackcrowsys.exceptions.AppException
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.getFieldValue
+import com.blackcrowsys.functionextensions.showLongToastText
 import com.blackcrowsys.ui.ViewModelFactory
+import com.blackcrowsys.ui.pin.SetPINActivity
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -32,6 +33,7 @@ class LoginActivity : AppCompatActivity() {
 
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
+
     @Inject
     lateinit var exceptionTransformer: ExceptionTransformer
 
@@ -52,11 +54,11 @@ class LoginActivity : AppCompatActivity() {
                     .flatMap { _ -> loginActivityViewModel.authenticateWithApi(AuthenticationRequest(etUsernameView.getFieldValue(), etPasswordView.getFieldValue())) }
                     .compose(exceptionTransformer.mapExceptionsForSingle())
                     .subscribeBy(onSuccess = {
-                        Log.d("LoginActivity", it.jwtToken)
+                        SetPINActivity.startSetPINActivity(this, it.jwtToken)
                     }, onError = {
                         val appException = it as AppException
                         Log.e("LoginActivity", "${appException.message}. Cause: ${appException.secondaryMessage}")
-                        Toast.makeText(this, it.message, Toast.LENGTH_LONG).show()
+                        showLongToastText(it.message)
                     })
             )
         }

@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Dinewell Carehome</string>
+    <string name="title_activity_login">El login</string>
+
+    <!-- Strings related to login -->
+    <string name="username">Usuario</string>
+    <string name="password">Contraseña</string>
+    <string name="url">Url</string>
+    <string name="login">login</string>
+
+    <!-- Error messages -->
+    <string name="unknown_error">error desconocido</string>
+    <string name="empty_username_password_error">El nombre de usuario o la contraseña estaban vacíos</string>
+    <string name="url_invalid_error">Por favor proporciona una URL válida</string>
+    <string name="incorrect_login_details">Error de inicio de sesion. Inténtalo de nuevo</string>
+    <string name="pin_contains_same_characters_error">El PIN contiene los mismos caracteres Por favor, elija otro PIN</string>
+    <string name="confirmed_pin_does_not_match_error">Los PIN introducidos no coinciden. Inténtalo de nuevo.</string>
+
+    <!-- Strings related to PIN Activity -->
+    <string name="please_create_pin">Por favor crea un PIN de 4 dígitos. Usará este PIN para iniciar sesión.</string>
+    <string name="please_confirm_pin">Por favor confirma tu PIN</string>
+    <string name="reset_pin">Restablecer PIN</string>
+    <string name="confirm_pin">Confirmar PIN</string>
+    <string name="clear_pin">Borrar el PIN</string>
+    <string name="title_activity_login_with_pin">Iniciar sesión con un PIN</string>
+    <string name="information_icon">Botón de información</string>
+    <string name="pin_tooltip_text">Haga clic en la cruz para rehacer su PIN. Cuando ambos PINS coinciden, presiona el botón verde a continuación.</string>
+    <string name="please_enter_pin">Por favor inicie sesión con su PIN de 4 dígitos</string>
+    <string name="pin_does_not_contain_four_digits_error">El pin no contiene 4 dígitos</string>
+    <string name="pin_does_not_match">El pin es incorrecto. Inténtalo de nuevo.</string>
+    <string name="no_pin_has_been_set_error">No PIN has been set</string>
+</resources>
