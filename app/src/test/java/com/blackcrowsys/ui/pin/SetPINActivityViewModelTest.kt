@@ -43,20 +43,19 @@ class SetPINActivityViewModelTest {
     fun `validatePin given valid PIN`() {
         val pin = "1203"
 
-        val testObserver = TestObserver<Boolean>()
+        val testObserver = TestObserver<Any>()
 
         setPinActivityViewModel.validatePin(pin)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
-        testObserver.assertValue { result -> result }
     }
 
     @Test
     fun `validatePin given PIN with same chars`() {
         val pin = "1111"
 
-        val testObserver = TestObserver<Boolean>()
+        val testObserver = TestObserver<Any>()
 
         setPinActivityViewModel.validatePin(pin)
             .subscribe(testObserver)
@@ -69,13 +68,12 @@ class SetPINActivityViewModelTest {
         val originalPin = "1211"
         val confirmedPin = "1211"
 
-        val testObserver = TestObserver<Boolean>()
+        val testObserver = TestObserver<Any>()
 
         setPinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
-        testObserver.assertValue { result -> result }
     }
 
     @Test
@@ -83,7 +81,7 @@ class SetPINActivityViewModelTest {
         val originalPin = "1211"
         val confirmedPin = "1212"
 
-        val testObserver = TestObserver<Boolean>()
+        val testObserver = TestObserver<Any>()
 
         setPinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
             .subscribe(testObserver)

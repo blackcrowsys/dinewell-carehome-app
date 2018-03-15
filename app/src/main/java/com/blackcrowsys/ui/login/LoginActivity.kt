@@ -50,8 +50,15 @@ class LoginActivity : AppCompatActivity() {
         btnLogin.setOnClickListener { _ ->
             compositeDisposable.add(
                 loginActivityViewModel.areUsernamePasswordNotEmpty(etUsernameView.getFieldValue(), etPasswordView.getFieldValue())
-                    .flatMap { _ -> loginActivityViewModel.isUrlValid(etUrlView.getFieldValue()) }
-                    .flatMap { _ -> loginActivityViewModel.authenticateWithApi(AuthenticationRequest(etUsernameView.getFieldValue(), etPasswordView.getFieldValue())) }
+                    .andThen(loginActivityViewModel.isUrlValid(etUrlView.getFieldValue()))
+                    .andThen(
+                        loginActivityViewModel.authenticateWithApi(
+                            AuthenticationRequest(
+                                etUsernameView.getFieldValue(),
+                                etPasswordView.getFieldValue()
+                            )
+                        )
+                    )
                     .compose(exceptionTransformer.mapExceptionsForSingle())
                     .subscribeBy(onSuccess = {
                         SetPINActivity.startSetPINActivity(this, it.jwtToken)

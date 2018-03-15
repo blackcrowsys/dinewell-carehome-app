@@ -10,6 +10,7 @@ import com.blackcrowsys.R
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.showShortToastText
 import com.blackcrowsys.ui.ViewModelFactory
+import com.blackcrowsys.ui.residents.ResidentsActivity
 import dagger.android.AndroidInjection
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -50,6 +51,7 @@ class LoginWithPINActivity : AppCompatActivity() {
                 .subscribeBy(onNext = {
                     if (it) {
                         Log.d("LoginWithPINActivity", "Login success")
+                        ResidentsActivity.startResidentsActivity(this)
                     } else {
                         showShortToastText(getString(R.string.pin_does_not_match))
                     }

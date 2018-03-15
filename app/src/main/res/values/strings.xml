@@ -29,4 +29,7 @@
     <string name="pin_does_not_contain_four_digits_error">The PIN does not contain 4 digits.</string>
     <string name="pin_does_not_match">PIN is Incorrect. Please try again.</string>
     <string name="no_pin_has_been_set_error">No PIN has been set</string>
+    <string name="search_for_resident_query">Search for a Resident</string>
+    <string name="test_name">Jonathan Mendellsohn</string>
+    <string name="name_placeholder">%1$s %2$s</string>
 </resources>
