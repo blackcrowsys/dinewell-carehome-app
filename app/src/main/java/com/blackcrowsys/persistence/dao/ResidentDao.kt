@@ -15,4 +15,10 @@ interface ResidentDao {
 
     @Query("SELECT * FROM Resident")
     fun findAllResidents(): Flowable<List<Resident>>
+
+    @Query("SELECT * FROM Resident WHERE firstName LIKE :firstName OR surname LIKE :surname")
+    fun findResidentsGivenFirstNameSurnameSearch(
+        firstName: String,
+        surname: String
+    ): Flowable<List<Resident>>
 }

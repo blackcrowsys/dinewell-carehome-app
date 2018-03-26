@@ -16,7 +16,14 @@ class ResidentsActivityViewModel(
         residentRepository.getResidentsFromApi()
             .compose(schedulerProvider.getSchedulersForSingle())
 
-    fun getCachedResidentsList(): Flowable<List<Resident>> =
-        residentRepository.getResidentsFromCache()
-            .compose(schedulerProvider.getSchedulersForFlowable())
+    fun performLetterBasedSearch(searchString: CharSequence): Flowable<List<Resident>> {
+        return if (searchString.isNotBlank()) {
+            residentRepository.getResidentsGivenNameQuery(
+                searchString.toString(),
+                searchString.toString()
+            )
+        } else {
+            residentRepository.getResidentsFromCache()
+        }
+    }
 }

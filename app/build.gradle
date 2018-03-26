@@ -71,6 +71,7 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.rxkotlinVersion"
+    implementation "com.jakewharton.rxbinding2:rxbinding-kotlin:$rootProject.rxBindingsVersion"
     implementation "com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3"
 
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"

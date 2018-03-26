@@ -26,4 +26,8 @@ class ResidentRepository @Inject constructor(
     }
 
     fun getResidentsFromCache(): Flowable<List<Resident>> = residentDao.findAllResidents()
+
+    fun getResidentsGivenNameQuery(firstName: String, surname: String): Flowable<List<Resident>> {
+        return residentDao.findResidentsGivenFirstNameSurnameSearch("%$firstName%", "%$surname%")
+    }
 }
