@@ -43,6 +43,8 @@ class ResidentsActivity : AppCompatActivity() {
 
     private lateinit var residentsActivityViewModel: ResidentsActivityViewModel
 
+    private val residentsAdapter = ResidentsAdapter()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
@@ -53,13 +55,14 @@ class ResidentsActivity : AppCompatActivity() {
 
         rvResidents.apply {
             layoutManager = LinearLayoutManager(this@ResidentsActivity)
+            adapter = residentsAdapter
         }
 
         compositeDisposable.add(
             residentsActivityViewModel.getLatestResidentList()
                 .compose(exceptionTransformer.mapExceptionsForSingle())
                 .subscribeBy(onSuccess = {
-                    rvResidents.adapter = ResidentsAdapter(it)
+                    residentsAdapter.submitList(it)
                     pbLoading.visibility = View.GONE
                     rvResidents.visibility = View.VISIBLE
                 }, onError = {
@@ -86,7 +89,7 @@ class ResidentsActivity : AppCompatActivity() {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeBy(
                     onNext = {
-                        rvResidents.adapter = ResidentsAdapter(it)
+                        residentsAdapter.submitList(it)
                     }, onError = {
                         Log.e("ResidentsActivity", it.message)
                     }

@@ -18,5 +18,11 @@ class MockContentHelper {
             val residentThree = Resident(3, "Red", "John", "imageUrl", "203")
             return listOf(residentOne, residentTwo, residentThree)
         }
+
+        fun provideDuplicateResidents(): List<Resident> {
+            val residentOne = Resident(1, "Bob", "Smith", "imageUrl", "202")
+            val residentTwo = Resident(1, "Bob", "Smith", "imageUrl", "202")
+            return listOf(residentOne, residentTwo)
+        }
     }
 }

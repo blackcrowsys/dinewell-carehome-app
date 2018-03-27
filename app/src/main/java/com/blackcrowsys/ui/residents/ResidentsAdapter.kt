@@ -1,5 +1,6 @@
 package com.blackcrowsys.ui.residents
 
+import android.support.v7.recyclerview.extensions.ListAdapter
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -8,8 +9,8 @@ import com.blackcrowsys.R
 import com.blackcrowsys.persistence.entity.Resident
 import kotlinx.android.synthetic.main.resident_rv_item.view.*
 
-class ResidentsAdapter(private val residentsList: List<Resident>) :
-    RecyclerView.Adapter<ResidentsAdapter.ResidentViewHolder>() {
+class ResidentsAdapter :
+    ListAdapter<Resident, ResidentsAdapter.ResidentViewHolder>(ResidentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResidentViewHolder {
         val view =
@@ -17,10 +18,8 @@ class ResidentsAdapter(private val residentsList: List<Resident>) :
         return ResidentViewHolder(view)
     }
 
-    override fun getItemCount() = residentsList.size
-
     override fun onBindViewHolder(holder: ResidentViewHolder, position: Int) {
-        holder.bindResident(residentsList[position])
+        holder.bindResident(getItem(position))
     }
 
     class ResidentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
