@@ -58,6 +58,17 @@ class ResidentsActivity : AppCompatActivity() {
             adapter = residentsAdapter
         }
 
+        btnRetryApi.setOnClickListener {
+            pbLoading.visibility = View.VISIBLE
+            tvErrorView.visibility = View.GONE
+            btnRetryApi.visibility = View.GONE
+            loadLatestData()
+        }
+
+        loadLatestData()
+    }
+
+    private fun loadLatestData() {
         compositeDisposable.add(
             residentsActivityViewModel.getLatestResidentList()
                 .compose(exceptionTransformer.mapExceptionsForSingle())
@@ -66,7 +77,10 @@ class ResidentsActivity : AppCompatActivity() {
                     pbLoading.visibility = View.GONE
                     rvResidents.visibility = View.VISIBLE
                 }, onError = {
-                    Log.e("ResidentsActivity", "${it.message}")
+                    tvErrorView.text = it.message
+                    tvErrorView.visibility = View.VISIBLE
+                    pbLoading.visibility = View.GONE
+                    btnRetryApi.visibility = View.VISIBLE
                 })
         )
     }
@@ -90,6 +104,14 @@ class ResidentsActivity : AppCompatActivity() {
                 .subscribeBy(
                     onNext = {
                         residentsAdapter.submitList(it)
+                        if (it.isEmpty()) {
+                            rvResidents.visibility = View.GONE
+                            tvErrorView.text = applicationContext.getString(R.string.no_results)
+                            tvErrorView.visibility = View.VISIBLE
+                        } else {
+                            tvErrorView.visibility = View.GONE
+                            rvResidents.visibility = View.VISIBLE
+                        }
                     }, onError = {
                         Log.e("ResidentsActivity", it.message)
                     }

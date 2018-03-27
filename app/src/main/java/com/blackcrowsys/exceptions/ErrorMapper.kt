@@ -3,7 +3,9 @@ package com.blackcrowsys.exceptions
 import android.content.Context
 import com.blackcrowsys.R
 import com.jakewharton.retrofit2.adapter.rxjava2.HttpException
+import java.net.ConnectException
 import java.net.HttpURLConnection.HTTP_UNAUTHORIZED
+import java.net.UnknownHostException
 
 class ErrorMapper(private val context: Context) {
 
@@ -16,6 +18,8 @@ class ErrorMapper(private val context: Context) {
             is ConfirmedPinDoesNotMatchException -> AppException(context.getString(R.string.confirmed_pin_does_not_match_error))
             is PinDoesNotContainFourDigitsException -> AppException(context.getString(R.string.pin_does_not_contain_four_digits_error))
             is NoPinHasBeenSetException -> AppException(context.getString(R.string.no_pin_has_been_set_error))
+            is UnknownHostException -> AppException(context.getString(R.string.unable_to_connect_to_be_error))
+            is ConnectException -> AppException(context.getString(R.string.unable_to_connect_to_be_error))
             else -> AppException(context.getString(R.string.unknown_error), throwable.message)
         }
     }
