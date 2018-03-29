@@ -29,4 +29,10 @@
     <string name="pin_does_not_contain_four_digits_error">El pin no contiene 4 dígitos</string>
     <string name="pin_does_not_match">El pin es incorrecto. Inténtalo de nuevo.</string>
     <string name="no_pin_has_been_set_error">No PIN has been set</string>
+    <string name="search_for_resident_query">Search for a Resident</string>
+    <string name="test_name">Jonathan Mendellsohn</string>
+    <string name="name_placeholder">%1$s %2$s</string>
+    <string name="unable_to_connect_to_be_error">No se puede conectar al servidor host. Inténtalo de nuevo</string>
+    <string name="retry">Rever</string>
+    <string name="no_results">No hay resultados</string>
 </resources>

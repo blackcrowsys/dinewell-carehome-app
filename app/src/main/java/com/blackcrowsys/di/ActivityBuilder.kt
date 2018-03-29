@@ -5,6 +5,8 @@ import com.blackcrowsys.ui.login.LoginWithPINActivity
 import com.blackcrowsys.ui.login.di.LoginModule
 import com.blackcrowsys.ui.pin.SetPINActivity
 import com.blackcrowsys.ui.pin.di.SetPINActivityModule
+import com.blackcrowsys.ui.residents.ResidentsActivity
+import com.blackcrowsys.ui.residents.di.ResidentsModule
 import com.blackcrowsys.ui.splash.SplashActivity
 import com.blackcrowsys.ui.splash.di.SplashActivityModule
 import dagger.Module
@@ -24,4 +26,7 @@ abstract class ActivityBuilder {
 
     @ContributesAndroidInjector(modules = [(SetPINActivityModule::class)])
     abstract fun bindPINActivity(): SetPINActivity
+
+    @ContributesAndroidInjector(modules = [(ResidentsModule::class)])
+    abstract fun bindResidentsActivity(): ResidentsActivity
 }

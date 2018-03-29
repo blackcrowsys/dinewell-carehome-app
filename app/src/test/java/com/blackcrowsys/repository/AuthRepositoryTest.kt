@@ -7,18 +7,17 @@ import com.blackcrowsys.persistence.dao.UserPermissionDao
 import com.blackcrowsys.persistence.entity.UserPermission
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
-import org.junit.Test
-
 import org.junit.Before
+import org.junit.Test
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Mockito.doNothing
 import org.mockito.MockitoAnnotations
 
 /**
- * Unit Test for [Repository].
+ * Unit Test for [AuthRepository].
  */
-class RepositoryTest {
+class AuthRepositoryTest {
 
     @Mock
     private lateinit var mockApiService: ApiService
@@ -26,12 +25,12 @@ class RepositoryTest {
     @Mock
     private lateinit var mockUserPermissionDao: UserPermissionDao
 
-    private lateinit var repository: Repository
+    private lateinit var authRepository: AuthRepository
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        repository = Repository(mockApiService, mockUserPermissionDao)
+        authRepository = AuthRepository(mockApiService, mockUserPermissionDao)
     }
 
     @Test
@@ -44,7 +43,7 @@ class RepositoryTest {
 
         val testObserver = TestObserver<AuthenticationResponse>()
 
-        repository.login(AuthenticationRequest("test", "password"))
+        authRepository.login(AuthenticationRequest("test", "password"))
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()

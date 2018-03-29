@@ -15,6 +15,7 @@ import com.blackcrowsys.functionextensions.hashString
 import com.blackcrowsys.functionextensions.hideSoftKeyboard
 import com.blackcrowsys.functionextensions.showShortToastText
 import com.blackcrowsys.ui.ViewModelFactory
+import com.blackcrowsys.ui.residents.ResidentsActivity
 import dagger.android.AndroidInjection
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
 import io.reactivex.disposables.CompositeDisposable
@@ -58,8 +59,8 @@ class SetPINActivity : AppCompatActivity() {
         pvFirst.setPinViewEventListener { pinView, _ ->
             compositeDisposable.add(
                 setPinActivityViewModel.validatePin(pinView.value)
-                .compose(exceptionTransformer.mapExceptionsForSingle())
-                .subscribeBy(onSuccess = {
+                    .compose(exceptionTransformer.mapExceptionsForCompletable())
+                    .subscribeBy(onComplete = {
                     hideFirstPinLevel()
                     showSecondPinLevel()
                     pvSecond.requestFocus()
@@ -72,8 +73,8 @@ class SetPINActivity : AppCompatActivity() {
         pvSecond.setPinViewEventListener { pinView, _ ->
             compositeDisposable.add(
                 setPinActivityViewModel.validateSecondPin(pvFirst.value, pinView.value)
-                    .compose(exceptionTransformer.mapExceptionsForSingle())
-                    .subscribeBy(onSuccess = {
+                    .compose(exceptionTransformer.mapExceptionsForCompletable())
+                    .subscribeBy(onComplete = {
                         hideSoftKeyboard()
                         showCompleteFloatingButton()
                         pvSecond.clearFocus()
@@ -108,7 +109,7 @@ class SetPINActivity : AppCompatActivity() {
         fabSavePin.setOnClickListener {
             compositeDisposable.add(
                 setPinActivityViewModel.savePinHash(pvSecond.value.hashString())
-                    .flatMap { _ ->
+                    .flatMap {
                         setPinActivityViewModel.saveJwtTokenUsingPin(
                             pvSecond.value,
                             intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
@@ -116,6 +117,7 @@ class SetPINActivity : AppCompatActivity() {
                     }
                     .subscribeBy(onNext = {
                         Log.d("SetPINActivity", "Encrypted JWT token $it")
+                        ResidentsActivity.startResidentsActivity(this)
                     }, onError = {
                         Log.e("SetPINActivity", "Error ${it.message}")
                     })

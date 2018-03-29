@@ -7,6 +7,7 @@ import com.blackcrowsys.functionextensions.containSameCharacters
 import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
+import io.reactivex.Completable
 import io.reactivex.Observable
 import io.reactivex.Single
 
@@ -16,23 +17,23 @@ class SetPINActivityViewModel(
     private val aesCipher: AESCipher
 ) : ViewModel() {
 
-    fun validatePin(pin: String): Single<Boolean> {
+    fun validatePin(pin: String): Completable {
         return Single.just(pin)
-            .flatMap { thePin ->
-                if (thePin.containSameCharacters()) {
-                    Single.error(PinContainsSameCharactersException())
+            .flatMapCompletable {
+                if (it.containSameCharacters()) {
+                    Completable.error(PinContainsSameCharactersException())
                 } else {
-                    Single.just(true)
+                    Completable.complete()
                 }
             }
-            .compose(schedulerProvider.getSchedulersForSingle())
+            .compose(schedulerProvider.getSchedulersForCompletable())
     }
 
-    fun validateSecondPin(originalPin: String, confirmedPin: String): Single<Boolean> {
+    fun validateSecondPin(originalPin: String, confirmedPin: String): Completable {
         return if (originalPin == confirmedPin) {
-            Single.just(true)
+            Completable.complete()
         } else {
-            Single.error(ConfirmedPinDoesNotMatchException())
+            Completable.error(ConfirmedPinDoesNotMatchException())
         }
     }
 
