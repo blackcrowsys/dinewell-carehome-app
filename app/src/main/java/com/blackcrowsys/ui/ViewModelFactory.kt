@@ -6,7 +6,7 @@ import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.repository.AuthRepository
 import com.blackcrowsys.repository.ResidentRepository
 import com.blackcrowsys.security.AESCipher
-import com.blackcrowsys.ui.login.LoginActivityViewModel
+import com.blackcrowsys.ui.login.LoginWithApiActivityViewModel
 import com.blackcrowsys.ui.login.LoginWithPINActivityViewModel
 import com.blackcrowsys.ui.pin.SetPINActivityViewModel
 import com.blackcrowsys.ui.residents.ResidentsActivityViewModel
@@ -29,10 +29,11 @@ class ViewModelFactory @Inject constructor(
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(LoginActivityViewModel::class.java) -> LoginActivityViewModel(
+            modelClass.isAssignableFrom(LoginWithApiActivityViewModel::class.java) -> LoginWithApiActivityViewModel(
                 authRepository,
                 schedulerProvider,
-                sharedPreferencesHandler
+                sharedPreferencesHandler,
+                exceptionTransformer
             ) as T
             modelClass.isAssignableFrom(SetPINActivityViewModel::class.java) -> SetPINActivityViewModel(
                 schedulerProvider,

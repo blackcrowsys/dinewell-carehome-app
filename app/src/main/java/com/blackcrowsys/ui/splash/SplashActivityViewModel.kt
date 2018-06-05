@@ -32,7 +32,7 @@ class SplashActivityViewModel(
             .compose(schedulerProvider.getSchedulersForObservable())
             .compose(exceptionTransformer.mapExceptionsForObservable())
             .subscribeBy(onNext = {
-                viewStateResponse.value = ViewState.Success<String>(it)
+                viewStateResponse.value = ViewState.Success(it)
             }, onError = {
                 viewStateResponse.value = ViewState.Error(it)
             })

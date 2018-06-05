@@ -5,7 +5,7 @@ import android.arch.lifecycle.ViewModelProviders
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.blackcrowsys.ui.ViewModelFactory
-import com.blackcrowsys.ui.login.LoginActivity
+import com.blackcrowsys.ui.login.LoginWithApiActivity
 import com.blackcrowsys.ui.login.LoginWithPINActivity
 import com.blackcrowsys.util.ViewState
 import dagger.android.AndroidInjection
@@ -24,8 +24,8 @@ class SplashActivity : AppCompatActivity() {
 
         Thread.sleep(2500)
 
-        viewModel.viewStateResponse.observe(this, Observer { response ->
-            processViewStateResponse(response)
+        viewModel.viewStateResponse.observe(this, Observer {
+            processViewStateResponse(it)
         })
 
         viewModel.findPinHash()
@@ -33,7 +33,7 @@ class SplashActivity : AppCompatActivity() {
 
     private fun processViewStateResponse(response: ViewState?) {
         when (response) {
-            is ViewState.Error -> LoginActivity.startLoginActivity(this)
+            is ViewState.Error -> LoginWithApiActivity.startLoginActivity(this)
             is ViewState.Success<*> -> LoginWithPINActivity.startLoginWithPINActivity(this)
         }
     }

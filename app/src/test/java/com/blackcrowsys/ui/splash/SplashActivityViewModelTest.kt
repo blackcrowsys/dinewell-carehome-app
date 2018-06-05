@@ -1,5 +1,6 @@
 package com.blackcrowsys.ui.splash
 
+import android.arch.lifecycle.Observer
 import com.blackcrowsys.R
 import com.blackcrowsys.exceptions.ErrorMapper
 import com.blackcrowsys.exceptions.ExceptionTransformer
@@ -8,12 +9,13 @@ import com.blackcrowsys.util.SharedPreferencesHandler
 import com.blackcrowsys.util.ViewState
 import io.reactivex.Observable
 import io.reactivex.schedulers.Schedulers
-import junit.framework.Assert.assertEquals
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Mockito.`when`
+import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
@@ -26,6 +28,9 @@ class SplashActivityViewModelTest {
 
     @Mock
     private lateinit var mockSharedPreferencesHandler: SharedPreferencesHandler
+
+    @Mock
+    private lateinit var observer: Observer<ViewState>
 
     private val schedulerProvider =
         SchedulerProvider(Schedulers.trampoline(), Schedulers.trampoline())
@@ -42,6 +47,7 @@ class SplashActivityViewModelTest {
                     mockSharedPreferencesHandler,
                     exceptionTransformer
                 )
+        splashActivityViewModel.viewStateResponse.observeForever(observer)
     }
 
     @Test
@@ -53,6 +59,8 @@ class SplashActivityViewModelTest {
         val viewStateSuccess =
             splashActivityViewModel.viewStateResponse.value as ViewState.Success<*>
         assertEquals(viewStateSuccess.data, "AiaskskASKjdkjA")
+
+        verify(observer).onChanged(ViewState.Success("AiaskskASKjdkjA"))
     }
 
     @Test
