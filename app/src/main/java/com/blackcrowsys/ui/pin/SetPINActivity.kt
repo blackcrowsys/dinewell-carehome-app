@@ -1,5 +1,6 @@
 package com.blackcrowsys.ui.pin
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -10,16 +11,14 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import com.blackcrowsys.R
-import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.hashString
 import com.blackcrowsys.functionextensions.hideSoftKeyboard
 import com.blackcrowsys.functionextensions.showShortToastText
 import com.blackcrowsys.ui.ViewModelFactory
 import com.blackcrowsys.ui.residents.ResidentsActivity
+import com.blackcrowsys.util.ViewState
 import dagger.android.AndroidInjection
 import io.github.douglasjunior.androidSimpleTooltip.SimpleTooltip
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_pin.*
 import javax.inject.Inject
 
@@ -35,13 +34,8 @@ class SetPINActivity : AppCompatActivity() {
         }
     }
 
-    private val compositeDisposable by lazy { CompositeDisposable() }
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var exceptionTransformer: ExceptionTransformer
 
     private lateinit var setPinActivityViewModel: SetPINActivityViewModel
 
@@ -56,32 +50,20 @@ class SetPINActivity : AppCompatActivity() {
 
         initialUiState()
 
+        setPinActivityViewModel.validateFirstPinState.observe(this, Observer {
+            processFirstPinCheckEvent(it)
+        })
+
         pvFirst.setPinViewEventListener { pinView, _ ->
-            compositeDisposable.add(
-                setPinActivityViewModel.validatePin(pinView.value)
-                    .compose(exceptionTransformer.mapExceptionsForCompletable())
-                    .subscribeBy(onComplete = {
-                    hideFirstPinLevel()
-                    showSecondPinLevel()
-                    pvSecond.requestFocus()
-                }, onError = {
-                    showShortToastText(it.message)
-                })
-            )
+            setPinActivityViewModel.validateFirstPin(pinView.value)
         }
 
+        setPinActivityViewModel.validateSecondPinState.observe(this, Observer {
+            processSecondPinCheckEvent(it)
+        })
+
         pvSecond.setPinViewEventListener { pinView, _ ->
-            compositeDisposable.add(
-                setPinActivityViewModel.validateSecondPin(pvFirst.value, pinView.value)
-                    .compose(exceptionTransformer.mapExceptionsForCompletable())
-                    .subscribeBy(onComplete = {
-                        hideSoftKeyboard()
-                        showCompleteFloatingButton()
-                        pvSecond.clearFocus()
-                    }, onError = {
-                        showShortToastText(it.message)
-                    })
-            )
+            setPinActivityViewModel.validateSecondPin(pvFirst.value, pinView.value)
         }
 
         btnCloseConfirmation.setOnClickListener {
@@ -106,29 +88,51 @@ class SetPINActivity : AppCompatActivity() {
                 .show()
         }
 
+        setPinActivityViewModel.encryptedJwtTokenState.observe(this, Observer {
+            processSavedPinAndEncyptedJwt(it)
+        })
+
         fabSavePin.setOnClickListener {
-            compositeDisposable.add(
-                setPinActivityViewModel.savePinHash(pvSecond.value.hashString())
-                    .flatMap {
-                        setPinActivityViewModel.saveJwtTokenUsingPin(
-                            pvSecond.value,
-                            intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
-                        )
-                    }
-                    .subscribeBy(onNext = {
-                        Log.d("SetPINActivity", "Encrypted JWT token $it")
-                        ResidentsActivity.startResidentsActivity(this)
-                    }, onError = {
-                        Log.e("SetPINActivity", "Error ${it.message}")
-                    })
+            setPinActivityViewModel.savePinHashWithEncryptedJwt(
+                pvSecond.value.hashString(),
+                intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
             )
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
-        compositeDisposable.dispose()
+    private fun processSavedPinAndEncyptedJwt(viewState: ViewState?) {
+        when (viewState) {
+            is ViewState.Success<*> -> {
+                Log.d("SetPINActivity", "Encrypted JWT token ${viewState.data}")
+                ResidentsActivity.startResidentsActivity(this)
+            }
+            is ViewState.Error -> {
+                Log.e("SetPINActivity", "Error ${viewState.throwable.message}")
+                showShortToastText(getString(R.string.unable_to_save_pin))
+            }
+        }
+    }
+
+    private fun processFirstPinCheckEvent(viewState: ViewState?) {
+        when (viewState) {
+            is ViewState.SuccessWithNoData -> {
+                hideFirstPinLevel()
+                showSecondPinLevel()
+                pvSecond.requestFocus()
+            }
+            is ViewState.Error -> showShortToastText(viewState.throwable.message)
+        }
+    }
+
+    private fun processSecondPinCheckEvent(viewState: ViewState?) {
+        when (viewState) {
+            is ViewState.SuccessWithNoData -> {
+                hideSoftKeyboard()
+                showCompleteFloatingButton()
+                pvSecond.clearFocus()
+            }
+            is ViewState.Error -> showShortToastText(viewState.throwable.message)
+        }
     }
 
     private fun initialUiState() {

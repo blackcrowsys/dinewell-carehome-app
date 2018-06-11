@@ -45,7 +45,7 @@ class SetPINActivityViewModelTest {
 
         val testObserver = TestObserver<Any>()
 
-        setPinActivityViewModel.validatePin(pin)
+        setPinActivityViewModel.validateFirstPin(pin)
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
@@ -57,7 +57,7 @@ class SetPINActivityViewModelTest {
 
         val testObserver = TestObserver<Any>()
 
-        setPinActivityViewModel.validatePin(pin)
+        setPinActivityViewModel.validateFirstPin(pin)
             .subscribe(testObserver)
 
         testObserver.assertError(PinContainsSameCharactersException::class.java)

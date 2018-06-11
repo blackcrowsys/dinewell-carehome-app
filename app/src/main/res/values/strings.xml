@@ -35,4 +35,5 @@
     <string name="unable_to_connect_to_be_error">Unable to connect to the server. Please try again.</string>
     <string name="retry">Retry</string>
     <string name="no_results">No results</string>
+    <string name="unable_to_save_pin">Unable to save the PIN. Please try again</string>
 </resources>

@@ -38,7 +38,8 @@ class ViewModelFactory @Inject constructor(
             modelClass.isAssignableFrom(SetPINActivityViewModel::class.java) -> SetPINActivityViewModel(
                 schedulerProvider,
                 sharedPreferencesHandler,
-                aesCipher
+                aesCipher,
+                exceptionTransformer
             ) as T
             modelClass.isAssignableFrom(LoginWithPINActivityViewModel::class.java) -> LoginWithPINActivityViewModel(
                 schedulerProvider,
