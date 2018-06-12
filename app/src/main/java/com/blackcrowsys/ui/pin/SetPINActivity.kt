@@ -11,7 +11,6 @@ import android.util.Log
 import android.view.Gravity
 import android.view.View
 import com.blackcrowsys.R
-import com.blackcrowsys.functionextensions.hashString
 import com.blackcrowsys.functionextensions.hideSoftKeyboard
 import com.blackcrowsys.functionextensions.showShortToastText
 import com.blackcrowsys.ui.ViewModelFactory
@@ -93,9 +92,8 @@ class SetPINActivity : AppCompatActivity() {
         })
 
         fabSavePin.setOnClickListener {
-            setPinActivityViewModel.savePinHashWithEncryptedJwt(
-                pvSecond.value.hashString(),
-                intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
+            setPinActivityViewModel.savePinHashAndEncryptJwt(
+                pvSecond.value, intent.getStringExtra(JWT_TOKEN_INTENT_EXTRA)
             )
         }
     }

@@ -66,7 +66,7 @@ class SetPINActivityViewModel(
         )
     }
 
-    fun savePinHashWithEncryptedJwt(pin: String, jwtToken: String) {
+    fun savePinHashAndEncryptJwt(pin: String, jwtToken: String) {
         savePinHash(pin.hashString())
             .flatMap { saveJwtTokenUsingPin(pin, jwtToken) }
             .subscribeBy(onNext = {
