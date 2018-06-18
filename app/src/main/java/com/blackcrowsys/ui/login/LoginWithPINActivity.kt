@@ -1,5 +1,6 @@
 package com.blackcrowsys.ui.login
 
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -7,13 +8,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.blackcrowsys.R
-import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.functionextensions.showShortToastText
 import com.blackcrowsys.ui.ViewModelFactory
 import com.blackcrowsys.ui.residents.ResidentsActivity
+import com.blackcrowsys.util.ViewState
 import dagger.android.AndroidInjection
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_login_with_pin.*
 import javax.inject.Inject
 
@@ -26,13 +25,8 @@ class LoginWithPINActivity : AppCompatActivity() {
         }
     }
 
-    private val compositeDisposable by lazy { CompositeDisposable() }
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var exceptionTransformer: ExceptionTransformer
 
     private lateinit var viewModel: LoginWithPINActivityViewModel
 
@@ -44,28 +38,28 @@ class LoginWithPINActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(LoginWithPINActivityViewModel::class.java)
 
+        viewModel.authenticatedPinCheckState.observe(this, Observer {
+            processState(it)
+        })
+
         btnLogin.setOnClickListener {
-            compositeDisposable.add(viewModel.validatePin(pinView.value)
-                .flatMapObservable { viewModel.authenticateWithPin(it) }
-                .compose(exceptionTransformer.mapExceptionsForObservable())
-                .subscribeBy(onNext = {
-                    if (it) {
-                        Log.d("LoginWithPINActivity", "Login success")
-                        ResidentsActivity.startResidentsActivity(this)
-                    } else {
-                        showShortToastText(getString(R.string.pin_does_not_match))
-                    }
-                }, onError = {
-                    Log.e("LoginWithPINActivity", "Error ${it.message}")
-                    showShortToastText(it.message)
-                })
-            )
+            viewModel.loginWithPin(pinView.value)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
-        compositeDisposable.dispose()
+    private fun processState(viewState: ViewState?) {
+        when (viewState) {
+            is ViewState.Error -> {
+                Log.e("LoginWithPINActivity", "Error ${viewState.throwable.message}")
+                showShortToastText(viewState.throwable.message)
+            }
+            is ViewState.Success<*> -> {
+                if (viewState.data as Boolean) {
+                    ResidentsActivity.startResidentsActivity(this)
+                } else {
+                    showShortToastText(getString(R.string.pin_does_not_match))
+                }
+            }
+        }
     }
 }

@@ -30,6 +30,11 @@ class SetPINActivityViewModel(
     var validateSecondPinState = MutableLiveData<ViewState>()
     var encryptedJwtTokenState = MutableLiveData<ViewState>()
 
+    override fun onCleared() {
+        compositeDisposable.clear()
+        compositeDisposable.dispose()
+    }
+
     fun validateFirstPin(pin: String) {
         compositeDisposable.add(Single.just(pin)
             .flatMapCompletable {
