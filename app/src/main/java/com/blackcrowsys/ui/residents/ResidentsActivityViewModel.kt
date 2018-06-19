@@ -1,29 +1,68 @@
 package com.blackcrowsys.ui.residents
 
+import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
-import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.repository.ResidentRepository
 import com.blackcrowsys.util.SchedulerProvider
+import com.blackcrowsys.util.ViewState
 import io.reactivex.Flowable
-import io.reactivex.Single
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.rxkotlin.subscribeBy
+import java.util.concurrent.TimeUnit
 
 class ResidentsActivityViewModel(
     private val schedulerProvider: SchedulerProvider,
-    private val residentRepository: ResidentRepository
+    private val residentRepository: ResidentRepository,
+    private val exceptionTransformer: ExceptionTransformer
 ) : ViewModel() {
 
-    fun getLatestResidentList(): Single<List<Resident>> =
-        residentRepository.getResidentsFromApi()
-            .compose(schedulerProvider.getSchedulersForSingle())
+    private val compositeDisposable by lazy { CompositeDisposable() }
 
-    fun performLetterBasedSearch(searchString: CharSequence): Flowable<List<Resident>> {
-        return if (searchString.isNotBlank()) {
-            residentRepository.getResidentsGivenNameQuery(
-                searchString.toString(),
-                searchString.toString()
-            )
-        } else {
-            residentRepository.getResidentsFromCache()
-        }
+    var latestResidentsListState = MutableLiveData<ViewState>()
+    var residentsListBySearchState = MutableLiveData<ViewState>()
+
+    override fun onCleared() {
+        compositeDisposable.clear()
+        compositeDisposable.dispose()
+    }
+
+    fun getLatestResidentList() {
+        compositeDisposable.add(
+            residentRepository.getResidentsFromApi()
+            .compose(schedulerProvider.getSchedulersForSingle())
+                .compose(exceptionTransformer.mapExceptionsForSingle())
+                .subscribeBy(onSuccess = {
+                    latestResidentsListState.value = ViewState.Success(it)
+                }, onError = {
+                    latestResidentsListState.value = ViewState.Error(it)
+                })
+        )
+    }
+
+    fun performLetterBasedSearch(searchString: CharSequence) {
+        compositeDisposable.add(Flowable.just(searchString.toString())
+            .filter { it.isNotBlank() }
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .flatMap { residentRepository.getResidentsGivenNameQuery(it, it) }
+            .compose(schedulerProvider.getSchedulersForFlowable())
+            .subscribeBy(onNext = {
+                residentsListBySearchState.value = ViewState.Success(it)
+            }, onError = {
+                residentsListBySearchState.value = ViewState.Error(it)
+            })
+        )
+
+        compositeDisposable.add(Flowable.just(searchString.toString())
+            .filter { it.isBlank() }
+            .debounce(500, TimeUnit.MILLISECONDS)
+            .flatMap { residentRepository.getResidentsFromCache() }
+            .compose(schedulerProvider.getSchedulersForFlowable())
+            .subscribeBy(onNext = {
+                residentsListBySearchState.value = ViewState.Success(it)
+            }, onError = {
+                residentsListBySearchState.value = ViewState.Error(it)
+            })
+        )
     }
 }

@@ -53,7 +53,8 @@ class ViewModelFactory @Inject constructor(
             ) as T
             modelClass.isAssignableFrom(ResidentsActivityViewModel::class.java) -> ResidentsActivityViewModel(
                 schedulerProvider,
-                residentRepository
+                residentRepository,
+                exceptionTransformer
             ) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

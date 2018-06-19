@@ -62,7 +62,7 @@ dependencies {
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     implementation "android.arch.lifecycle:extensions:$rootProject.architectureComponentsVersion"
     kapt "android.arch.lifecycle:compiler:$rootProject.architectureComponentsVersion"
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.2'
 
     implementation "android.arch.persistence.room:runtime:$rootProject.roomVersion"
     kapt "android.arch.persistence.room:compiler:$rootProject.roomVersion"
@@ -71,7 +71,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rootProject.rxjavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rootProject.rxkotlinVersion"
-    implementation "com.jakewharton.rxbinding2:rxbinding-kotlin:$rootProject.rxBindingsVersion"
     implementation "com.f2prateek.rx.preferences2:rx-preferences:2.0.0-RC3"
 
     implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
