@@ -37,12 +37,7 @@ class LoginWithApiActivityViewModel(
             areUsernamePasswordNotEmpty(username, password)
                 .andThen(isUrlValid(url))
                 .andThen(Single.defer {
-                    authenticateWithApi(
-                        AuthenticationRequest(
-                            username,
-                            password
-                        )
-                    )
+                    authenticateWithApi(AuthenticationRequest(username, password))
                 })
                 .compose(exceptionTransformer.mapExceptionsForSingle())
                 .subscribeBy(onSuccess = {

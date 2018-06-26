@@ -58,16 +58,10 @@ class LoginWithApiActivity : AppCompatActivity() {
         when (viewState) {
             is ViewState.Error -> {
                 val appException = viewState.throwable as AppException
-                Log.e(
-                    "LoginActivity",
-                    "${appException.message}. Cause: ${appException.secondaryMessage}"
-                )
+                Log.e("LoginActivity", "${appException.message}. Cause: ${appException.secondaryMessage}")
                 showLongToastText(viewState.throwable.message)
             }
-            is ViewState.Success<*> -> SetPINActivity.startSetPINActivity(
-                this,
-                viewState.data as String
-            )
+            is ViewState.Success<*> -> SetPINActivity.startSetPINActivity(this, viewState.data as String)
         }
     }
 }
