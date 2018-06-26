@@ -35,4 +35,5 @@
     <string name="unable_to_connect_to_be_error">No se puede conectar al servidor host. Inténtalo de nuevo</string>
     <string name="retry">Rever</string>
     <string name="no_results">No hay resultados</string>
+    <string name="unable_to_save_pin">No se puede guardar el PIN. Inténtalo de nuevo</string>
 </resources>

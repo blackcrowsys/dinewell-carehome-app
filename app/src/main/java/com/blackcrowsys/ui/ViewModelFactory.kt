@@ -2,14 +2,15 @@ package com.blackcrowsys.ui
 
 import android.arch.lifecycle.ViewModel
 import android.arch.lifecycle.ViewModelProvider
+import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.repository.AuthRepository
 import com.blackcrowsys.repository.ResidentRepository
 import com.blackcrowsys.security.AESCipher
-import com.blackcrowsys.ui.login.LoginActivityViewModel
+import com.blackcrowsys.ui.login.LoginWithApiActivityViewModel
 import com.blackcrowsys.ui.login.LoginWithPINActivityViewModel
 import com.blackcrowsys.ui.pin.SetPINActivityViewModel
 import com.blackcrowsys.ui.residents.ResidentsActivityViewModel
-import com.blackcrowsys.ui.splash.SplashActivityVewModel
+import com.blackcrowsys.ui.splash.SplashActivityViewModel
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import javax.inject.Inject
@@ -21,33 +22,39 @@ class ViewModelFactory @Inject constructor(
     private val residentRepository: ResidentRepository,
     private val schedulerProvider: SchedulerProvider,
     private val sharedPreferencesHandler: SharedPreferencesHandler,
-    private val aesCipher: AESCipher
+    private val aesCipher: AESCipher,
+    private val exceptionTransformer: ExceptionTransformer
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(LoginActivityViewModel::class.java) -> LoginActivityViewModel(
+            modelClass.isAssignableFrom(LoginWithApiActivityViewModel::class.java) -> LoginWithApiActivityViewModel(
                 authRepository,
                 schedulerProvider,
-                sharedPreferencesHandler
+                sharedPreferencesHandler,
+                exceptionTransformer
             ) as T
             modelClass.isAssignableFrom(SetPINActivityViewModel::class.java) -> SetPINActivityViewModel(
                 schedulerProvider,
                 sharedPreferencesHandler,
-                aesCipher
+                aesCipher,
+                exceptionTransformer
             ) as T
             modelClass.isAssignableFrom(LoginWithPINActivityViewModel::class.java) -> LoginWithPINActivityViewModel(
                 schedulerProvider,
-                sharedPreferencesHandler
+                sharedPreferencesHandler,
+                exceptionTransformer
             ) as T
-            modelClass.isAssignableFrom(SplashActivityVewModel::class.java) -> SplashActivityVewModel(
+            modelClass.isAssignableFrom(SplashActivityViewModel::class.java) -> SplashActivityViewModel(
                 schedulerProvider,
-                sharedPreferencesHandler
+                sharedPreferencesHandler,
+                exceptionTransformer
             ) as T
             modelClass.isAssignableFrom(ResidentsActivityViewModel::class.java) -> ResidentsActivityViewModel(
                 schedulerProvider,
-                residentRepository
+                residentRepository,
+                exceptionTransformer
             ) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

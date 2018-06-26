@@ -1,6 +1,6 @@
 package com.blackcrowsys.di
 
-import com.blackcrowsys.ui.login.LoginActivity
+import com.blackcrowsys.ui.login.LoginWithApiActivity
 import com.blackcrowsys.ui.login.LoginWithPINActivity
 import com.blackcrowsys.ui.login.di.LoginModule
 import com.blackcrowsys.ui.pin.SetPINActivity
@@ -19,7 +19,7 @@ abstract class ActivityBuilder {
     abstract fun bindSplashActivity(): SplashActivity
 
     @ContributesAndroidInjector(modules = [(LoginModule::class)])
-    abstract fun bindLoginActivity(): LoginActivity
+    abstract fun bindLoginActivity(): LoginWithApiActivity
 
     @ContributesAndroidInjector(modules = [(LoginModule::class)])
     abstract fun bindLoginWithPINActivity(): LoginWithPINActivity

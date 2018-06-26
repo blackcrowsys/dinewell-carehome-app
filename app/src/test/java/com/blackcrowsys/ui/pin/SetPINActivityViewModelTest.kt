@@ -1,20 +1,31 @@
 package com.blackcrowsys.ui.pin
 
-import com.blackcrowsys.exceptions.ConfirmedPinDoesNotMatchException
-import com.blackcrowsys.exceptions.PinContainsSameCharactersException
+import android.arch.lifecycle.Observer
+import com.blackcrowsys.R
+import com.blackcrowsys.exceptions.ErrorMapper
+import com.blackcrowsys.exceptions.ExceptionTransformer
+import com.blackcrowsys.functionextensions.hashString
 import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
+import com.blackcrowsys.util.ViewState
 import io.reactivex.Observable
-import io.reactivex.observers.TestObserver
 import io.reactivex.schedulers.Schedulers
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.ArgumentCaptor
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.RuntimeEnvironment
 
+/**
+ * Unit test for [SetPINActivityViewModel].
+ */
+@RunWith(RobolectricTestRunner::class)
 class SetPINActivityViewModelTest {
 
     @Mock
@@ -23,6 +34,9 @@ class SetPINActivityViewModelTest {
     @Mock
     private lateinit var mockAESCipher: AESCipher
 
+    @Mock
+    private lateinit var liveDataObserver: Observer<ViewState>
+
     private val schedulerProvider =
         SchedulerProvider(Schedulers.trampoline(), Schedulers.trampoline())
 
@@ -30,86 +44,90 @@ class SetPINActivityViewModelTest {
 
     @Before
     fun setUp() {
+        val exceptionTransformer = ExceptionTransformer(ErrorMapper(RuntimeEnvironment.application))
         MockitoAnnotations.initMocks(this)
         setPinActivityViewModel =
                 SetPINActivityViewModel(
                     schedulerProvider,
                     mockSharedPreferencesHandler,
-                    mockAESCipher
+                    mockAESCipher,
+                    exceptionTransformer
                 )
+
+        setPinActivityViewModel.validateFirstPinState.observeForever(liveDataObserver)
+        setPinActivityViewModel.validateSecondPinState.observeForever(liveDataObserver)
+        setPinActivityViewModel.encryptedJwtTokenState.observeForever(liveDataObserver)
     }
 
     @Test
-    fun `validatePin given valid PIN`() {
+    fun `validateFirstPin given valid PIN`() {
         val pin = "1203"
+        val argumentCaptor = ArgumentCaptor.forClass(ViewState.SuccessWithNoData::class.java)
 
-        val testObserver = TestObserver<Any>()
+        setPinActivityViewModel.validateFirstPin(pin)
 
-        setPinActivityViewModel.validatePin(pin)
-            .subscribe(testObserver)
+        verify(liveDataObserver).onChanged(argumentCaptor.capture())
 
-        testObserver.assertNoErrors()
+        assert(argumentCaptor.value is ViewState.SuccessWithNoData)
     }
 
     @Test
-    fun `validatePin given PIN with same chars`() {
+    fun `validateFirstPin given PIN with same chars`() {
         val pin = "1111"
+        val argumentCaptor = ArgumentCaptor.forClass(ViewState.Error::class.java)
 
-        val testObserver = TestObserver<Any>()
+        setPinActivityViewModel.validateFirstPin(pin)
 
-        setPinActivityViewModel.validatePin(pin)
-            .subscribe(testObserver)
+        verify(liveDataObserver).onChanged(argumentCaptor.capture())
 
-        testObserver.assertError(PinContainsSameCharactersException::class.java)
+        assert(argumentCaptor.value is ViewState.Error)
+        assertEquals(
+            RuntimeEnvironment.application.getString(R.string.pin_contains_same_characters_error),
+            argumentCaptor.value.throwable.message
+        )
     }
 
     @Test
     fun `validateSecondPin given same PIN`() {
         val originalPin = "1211"
         val confirmedPin = "1211"
-
-        val testObserver = TestObserver<Any>()
+        val argumentCaptor = ArgumentCaptor.forClass(ViewState.SuccessWithNoData::class.java)
 
         setPinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
-            .subscribe(testObserver)
 
-        testObserver.assertNoErrors()
+        verify(liveDataObserver).onChanged(argumentCaptor.capture())
+
+        assert(argumentCaptor.value is ViewState.SuccessWithNoData)
     }
 
     @Test
     fun `validateSecondPin given different PIN`() {
         val originalPin = "1211"
         val confirmedPin = "1212"
-
-        val testObserver = TestObserver<Any>()
+        val argumentCaptor = ArgumentCaptor.forClass(ViewState.Error::class.java)
 
         setPinActivityViewModel.validateSecondPin(originalPin, confirmedPin)
-            .subscribe(testObserver)
 
-        testObserver.assertError(ConfirmedPinDoesNotMatchException::class.java)
+        verify(liveDataObserver).onChanged(argumentCaptor.capture())
+
+        assert(argumentCaptor.value is ViewState.Error)
+        assertEquals(
+            RuntimeEnvironment.application.getString(R.string.confirmed_pin_does_not_match_error),
+            argumentCaptor.value.throwable.message
+        )
     }
 
     @Test
-    fun `savePinHash with hash`() {
-        val hashString = "cwKKSjsdAAndi9!lksk="
-        doNothing().`when`(mockSharedPreferencesHandler).setPinHash(hashString)
-        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(hashString))
-
-        val testObserver = TestObserver<String>()
-        setPinActivityViewModel.savePinHash(hashString)
-            .subscribe(testObserver)
-
-        testObserver.assertNoErrors()
-        testObserver.assertValue { it == hashString }
-    }
-
-    @Test
-    fun `saveJwtTokenUsingPin given a PIN`() {
-        val pin = "1112"
-        val jwtToken = "JWT weeksja2jadjJJSkaj3jJAs09KAs="
+    fun `savePinHashAndEncryptJwt given pin and jwt`() {
+        val pin = "1121"
+        val jwt = "JWT Aj21n3nmkk123006534masdnLKAjd921a3eBd"
         val encryptedJwtToken = "zAAjkjsd9012jiA!odkas"
+        val argumentCaptor = ArgumentCaptor.forClass(ViewState.Success::class.java)
 
-        `when`(mockAESCipher.encrypt(pin, jwtToken)).thenReturn(encryptedJwtToken)
+        doNothing().`when`(mockSharedPreferencesHandler).setPinHash(pin.hashString())
+        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(pin.hashString()))
+
+        `when`(mockAESCipher.encrypt(pin, jwt)).thenReturn(encryptedJwtToken)
         doNothing().`when`(mockSharedPreferencesHandler).setEncryptedJwtToken(encryptedJwtToken)
         `when`(mockSharedPreferencesHandler.getEncryptedJwtToken()).thenReturn(
             Observable.just(
@@ -117,11 +135,33 @@ class SetPINActivityViewModelTest {
             )
         )
 
-        val testObserver = TestObserver<String>()
-        setPinActivityViewModel.saveJwtTokenUsingPin(pin, jwtToken)
-            .subscribe(testObserver)
+        setPinActivityViewModel.savePinHashAndEncryptJwt(pin, jwt)
 
-        testObserver.assertNoErrors()
-        testObserver.assertValue { it == encryptedJwtToken }
+        verify(liveDataObserver).onChanged(argumentCaptor.capture())
+        assertEquals(encryptedJwtToken, argumentCaptor.value.data)
+    }
+
+    @Test
+    fun `savePinHashAndEncryptJwt when error occurs`() {
+        val pin = "1121"
+        val jwt = "JWT Aj21n3nmkk123006534masdnLKAjd921a3eBd"
+        val encryptedJwtToken = "zAAjkjsd9012jiA!odkas"
+        val argumentCaptor = ArgumentCaptor.forClass(ViewState.Error::class.java)
+
+        doNothing().`when`(mockSharedPreferencesHandler).setPinHash(pin.hashString())
+        `when`(mockSharedPreferencesHandler.getPinHash()).thenReturn(Observable.just(pin.hashString()))
+
+        `when`(mockAESCipher.encrypt(pin, jwt)).thenThrow(RuntimeException::class.java)
+        doNothing().`when`(mockSharedPreferencesHandler).setEncryptedJwtToken(encryptedJwtToken)
+        `when`(mockSharedPreferencesHandler.getEncryptedJwtToken()).thenReturn(
+            Observable.just(
+                encryptedJwtToken
+            )
+        )
+
+        setPinActivityViewModel.savePinHashAndEncryptJwt(pin, jwt)
+
+        verify(liveDataObserver).onChanged(argumentCaptor.capture())
+        assert(argumentCaptor.value is ViewState.Error)
     }
 }

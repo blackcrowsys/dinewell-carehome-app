@@ -1,6 +1,7 @@
 package com.blackcrowsys.ui.residents
 
 import android.annotation.SuppressLint
+import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
@@ -12,16 +13,11 @@ import android.view.Menu
 import android.view.View
 import android.widget.SearchView
 import com.blackcrowsys.R
-import com.blackcrowsys.exceptions.ExceptionTransformer
+import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.ui.ViewModelFactory
-import com.jakewharton.rxbinding2.widget.RxSearchView
+import com.blackcrowsys.util.ViewState
 import dagger.android.AndroidInjection
-import io.reactivex.BackpressureStrategy
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.rxkotlin.subscribeBy
 import kotlinx.android.synthetic.main.activity_residents.*
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class ResidentsActivity : AppCompatActivity() {
@@ -33,13 +29,8 @@ class ResidentsActivity : AppCompatActivity() {
         }
     }
 
-    private val compositeDisposable by lazy { CompositeDisposable() }
-
     @Inject
     lateinit var viewModelFactory: ViewModelFactory
-
-    @Inject
-    lateinit var exceptionTransformer: ExceptionTransformer
 
     private lateinit var residentsActivityViewModel: ResidentsActivityViewModel
 
@@ -62,28 +53,58 @@ class ResidentsActivity : AppCompatActivity() {
             pbLoading.visibility = View.VISIBLE
             tvErrorView.visibility = View.GONE
             btnRetryApi.visibility = View.GONE
-            loadLatestData()
+            residentsActivityViewModel.getLatestResidentList()
         }
 
-        loadLatestData()
+        residentsActivityViewModel.latestResidentsListState.observe(this, Observer {
+            processLatestResidentsList(it)
+        })
+
+        residentsActivityViewModel.residentsListBySearchState.observe(this, Observer {
+            processResidentsListBySearch(it)
+        })
+
+        residentsActivityViewModel.getLatestResidentList()
     }
 
-    private fun loadLatestData() {
-        compositeDisposable.add(
-            residentsActivityViewModel.getLatestResidentList()
-                .compose(exceptionTransformer.mapExceptionsForSingle())
-                .subscribeBy(onSuccess = {
-                    residentsAdapter.submitList(it)
-                    pbLoading.visibility = View.GONE
-                    rvResidents.visibility = View.VISIBLE
-                }, onError = {
-                    tvErrorView.text = it.message
+    @Suppress("UNCHECKED_CAST")
+    private fun processResidentsListBySearch(viewState: ViewState?) {
+        when (viewState) {
+            is ViewState.Success<*> -> {
+                val residentListBySearch = viewState.data as List<Resident>
+                residentsAdapter.submitList(residentListBySearch)
+                if (residentListBySearch.isEmpty()) {
+                    rvResidents.visibility = View.GONE
+                    tvErrorView.text = applicationContext.getString(R.string.no_results)
                     tvErrorView.visibility = View.VISIBLE
-                    pbLoading.visibility = View.GONE
-                    btnRetryApi.visibility = View.VISIBLE
-                })
-        )
+                } else {
+                    tvErrorView.visibility = View.GONE
+                    rvResidents.visibility = View.VISIBLE
+                }
+            }
+            is ViewState.Error -> {
+                Log.e("ResidentsActivity", viewState.throwable.message)
+            }
+        }
     }
+
+    @Suppress("UNCHECKED_CAST")
+    private fun processLatestResidentsList(viewState: ViewState?) {
+        when (viewState) {
+            is ViewState.Success<*> -> {
+                residentsAdapter.submitList(viewState.data as List<Resident>)
+                pbLoading.visibility = View.GONE
+                rvResidents.visibility = View.VISIBLE
+            }
+            is ViewState.Error -> {
+                tvErrorView.text = viewState.throwable.message
+                tvErrorView.visibility = View.VISIBLE
+                pbLoading.visibility = View.GONE
+                btnRetryApi.visibility = View.VISIBLE
+            }
+        }
+    }
+
 
     @SuppressLint("CheckResult")
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -94,35 +115,18 @@ class ResidentsActivity : AppCompatActivity() {
         searchView.setIconifiedByDefault(false)
         searchView.queryHint = getString(R.string.search_for_resident_query)
 
-        compositeDisposable.add(
-            RxSearchView.queryTextChangeEvents(searchView)
-                .skipInitialValue()
-                .debounce(500, TimeUnit.MICROSECONDS)
-                .toFlowable(BackpressureStrategy.BUFFER)
-                .flatMap { residentsActivityViewModel.performLetterBasedSearch(it.queryText()) }
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeBy(
-                    onNext = {
-                        residentsAdapter.submitList(it)
-                        if (it.isEmpty()) {
-                            rvResidents.visibility = View.GONE
-                            tvErrorView.text = applicationContext.getString(R.string.no_results)
-                            tvErrorView.visibility = View.VISIBLE
-                        } else {
-                            tvErrorView.visibility = View.GONE
-                            rvResidents.visibility = View.VISIBLE
-                        }
-                    }, onError = {
-                        Log.e("ResidentsActivity", it.message)
-                    }
-                ))
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextChange(query: String): Boolean {
+                residentsActivityViewModel.performLetterBasedSearch(query)
+                return true
+            }
+
+            override fun onQueryTextSubmit(query: String): Boolean {
+                residentsActivityViewModel.performLetterBasedSearch(query)
+                return true
+            }
+        })
 
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        compositeDisposable.clear()
-        compositeDisposable.dispose()
     }
 }
