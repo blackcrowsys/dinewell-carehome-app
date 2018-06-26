@@ -30,7 +30,7 @@ class ResidentsActivityViewModel(
     fun getLatestResidentList() {
         compositeDisposable.add(
             residentRepository.getResidentsFromApi()
-            .compose(schedulerProvider.getSchedulersForSingle())
+                .compose(schedulerProvider.getSchedulersForSingle())
                 .compose(exceptionTransformer.mapExceptionsForSingle())
                 .subscribeBy(onSuccess = {
                     latestResidentsListState.value = ViewState.Success(it)
