@@ -4,7 +4,9 @@ import android.arch.lifecycle.MutableLiveData
 import android.arch.lifecycle.ViewModel
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.repository.ResidentRepository
+import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
+import com.blackcrowsys.util.SharedPreferencesHandler
 import com.blackcrowsys.util.ViewState
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
@@ -14,6 +16,8 @@ import java.util.concurrent.TimeUnit
 class ResidentsActivityViewModel(
     private val schedulerProvider: SchedulerProvider,
     private val residentRepository: ResidentRepository,
+    private val aesCipher: AESCipher,
+    private val sharedPreferencesHandler: SharedPreferencesHandler,
     private val exceptionTransformer: ExceptionTransformer
 ) : ViewModel() {
 
@@ -27,12 +31,14 @@ class ResidentsActivityViewModel(
         compositeDisposable.dispose()
     }
 
-    fun getLatestResidentList() {
+    fun getLatestResidentList(pin: String) {
         compositeDisposable.add(
-            residentRepository.getResidentsFromApi()
-                .compose(schedulerProvider.getSchedulersForSingle())
-                .compose(exceptionTransformer.mapExceptionsForSingle())
-                .subscribeBy(onSuccess = {
+            sharedPreferencesHandler.getEncryptedJwtToken()
+                .map { aesCipher.decrypt(pin, it) }
+                .flatMapSingle { residentRepository.getResidentsFromApi(it) }
+                .compose(schedulerProvider.getSchedulersForObservable())
+                .compose(exceptionTransformer.mapExceptionsForObservable())
+                .subscribeBy(onNext = {
                     latestResidentsListState.value = ViewState.Success(it)
                 }, onError = {
                     latestResidentsListState.value = ViewState.Error(it)

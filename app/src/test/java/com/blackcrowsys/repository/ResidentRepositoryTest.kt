@@ -35,14 +35,14 @@ class ResidentRepositoryTest {
     @Test
     fun getResidentsFromApi() {
         val residentResponseList = MockContentHelper.provideListResidentsResponse()
-        `when`(mockApiService.getResidents()).thenReturn(Single.just(residentResponseList))
+        `when`(mockApiService.getResidents("jwt")).thenReturn(Single.just(residentResponseList))
         doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[0]))
         doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[1]))
         doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[2]))
 
         val testObserver = TestObserver<List<Resident>>()
 
-        residentRepository.getResidentsFromApi()
+        residentRepository.getResidentsFromApi("jwt")
             .subscribe(testObserver)
 
         testObserver.assertNoErrors()
