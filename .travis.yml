@@ -9,7 +9,7 @@ android:
 jdk:
   - oraclejdk8
 script:
-  - ./gradlew clean test build
+  - ./gradlew clean testDebug build
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
 cache:

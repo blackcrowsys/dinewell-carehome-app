@@ -30,6 +30,10 @@ import java.net.UnknownHostException
 /**
  * Unit test for [ResidentsActivityViewModel].
  */
+const val ENCRYPTED_JWT_TOKEN = "encryptedJwt"
+const val PIN = "1111"
+const val JWT_TOKEN = "jwt"
+
 @RunWith(RobolectricTestRunner::class)
 class ResidentsActivityViewModelTest {
 
@@ -72,13 +76,13 @@ class ResidentsActivityViewModelTest {
 
         mockDecryptCalls()
 
-        `when`(mockResidentRepository.getResidentsFromApi("jwt")).thenReturn(
+        `when`(mockResidentRepository.getResidentsFromApi(JWT_TOKEN)).thenReturn(
             Single.just(
                 MockContentHelper.provideListResidents()
             )
         )
 
-        residentsActivityViewModel.getLatestResidentList("1111")
+        residentsActivityViewModel.getLatestResidentList(PIN)
 
         verify(liveDataObserver).onChanged(argumentCaptor.capture())
         assertEquals(MockContentHelper.provideListResidents(), argumentCaptor.value.data)
@@ -91,11 +95,11 @@ class ResidentsActivityViewModelTest {
 
         mockDecryptCalls()
 
-        `when`(mockResidentRepository.getResidentsFromApi("jwt")).thenReturn(
+        `when`(mockResidentRepository.getResidentsFromApi(JWT_TOKEN)).thenReturn(
             Single.error(UnknownHostException())
         )
 
-        residentsActivityViewModel.getLatestResidentList("1111")
+        residentsActivityViewModel.getLatestResidentList(PIN)
 
         verify(liveDataObserver).onChanged(argumentCaptor.capture())
 
@@ -146,7 +150,7 @@ class ResidentsActivityViewModelTest {
     }
 
     private fun mockDecryptCalls() {
-        `when`(mockSharedPreferencesHandler.getEncryptedJwtToken()).thenReturn(Observable.just("encryptedJwt"))
-        `when`(mockAESCipher.decrypt("1111", "encryptedJwt")).thenReturn("jwt")
+        `when`(mockSharedPreferencesHandler.getEncryptedJwtToken()).thenReturn(Observable.just(ENCRYPTED_JWT_TOKEN))
+        `when`(mockAESCipher.decrypt(PIN, ENCRYPTED_JWT_TOKEN)).thenReturn(JWT_TOKEN)
     }
 }
