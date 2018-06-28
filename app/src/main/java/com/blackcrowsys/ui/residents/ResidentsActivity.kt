@@ -20,11 +20,14 @@ import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_residents.*
 import javax.inject.Inject
 
+const val PIN_EXTRA = "pin_extra"
+
 class ResidentsActivity : AppCompatActivity() {
 
     companion object {
-        fun startResidentsActivity(initialContext: Context) {
+        fun startResidentsActivity(initialContext: Context, pin: String) {
             val intent = Intent(initialContext, ResidentsActivity::class.java)
+            intent.putExtra(PIN_EXTRA, pin)
             initialContext.startActivity(intent)
         }
     }
@@ -53,7 +56,7 @@ class ResidentsActivity : AppCompatActivity() {
             pbLoading.visibility = View.VISIBLE
             tvErrorView.visibility = View.GONE
             btnRetryApi.visibility = View.GONE
-            residentsActivityViewModel.getLatestResidentList()
+            residentsActivityViewModel.getLatestResidentList(intent.getStringExtra(PIN_EXTRA))
         }
 
         residentsActivityViewModel.latestResidentsListState.observe(this, Observer {
@@ -64,7 +67,7 @@ class ResidentsActivity : AppCompatActivity() {
             processResidentsListBySearch(it)
         })
 
-        residentsActivityViewModel.getLatestResidentList()
+        residentsActivityViewModel.getLatestResidentList(intent.getStringExtra(PIN_EXTRA))
     }
 
     @Suppress("UNCHECKED_CAST")

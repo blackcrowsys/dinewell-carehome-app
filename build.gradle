@@ -34,7 +34,7 @@ ext {
     buildToolsVersion = "27.0.3"
     supportLibraryVersion = "27.1.1"
 
-    roomVersion = "1.1.1-rc1"
+    roomVersion = "1.1.1"
     architectureComponentsVersion = "1.1.1"
     daggerVersion = "2.13"
     retrofitVersion = "2.3.0"

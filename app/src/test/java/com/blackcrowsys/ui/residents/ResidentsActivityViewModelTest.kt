@@ -6,9 +6,12 @@ import com.blackcrowsys.R
 import com.blackcrowsys.exceptions.ErrorMapper
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.repository.ResidentRepository
+import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
+import com.blackcrowsys.util.SharedPreferencesHandler
 import com.blackcrowsys.util.ViewState
 import io.reactivex.Flowable
+import io.reactivex.Observable
 import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.junit.Assert.assertEquals
@@ -27,6 +30,10 @@ import java.net.UnknownHostException
 /**
  * Unit test for [ResidentsActivityViewModel].
  */
+const val ENCRYPTED_JWT_TOKEN = "encryptedJwt"
+const val PIN = "1111"
+const val JWT_TOKEN = "jwt"
+
 @RunWith(RobolectricTestRunner::class)
 class ResidentsActivityViewModelTest {
 
@@ -35,6 +42,12 @@ class ResidentsActivityViewModelTest {
 
     @Mock
     private lateinit var liveDataObserver: Observer<ViewState>
+
+    @Mock
+    private lateinit var mockAESCipher: AESCipher
+
+    @Mock
+    private lateinit var mockSharedPreferencesHandler: SharedPreferencesHandler
 
     private val schedulerProvider =
         SchedulerProvider(Schedulers.trampoline(), Schedulers.trampoline())
@@ -48,6 +61,8 @@ class ResidentsActivityViewModelTest {
                 ResidentsActivityViewModel(
                     schedulerProvider,
                     mockResidentRepository,
+                    mockAESCipher,
+                    mockSharedPreferencesHandler,
                     exceptionTransformer
                 )
 
@@ -59,13 +74,15 @@ class ResidentsActivityViewModelTest {
     fun getLatestResidentList() {
         val argumentCaptor = ArgumentCaptor.forClass(ViewState.Success::class.java)
 
-        `when`(mockResidentRepository.getResidentsFromApi()).thenReturn(
+        mockDecryptCalls()
+
+        `when`(mockResidentRepository.getResidentsFromApi(JWT_TOKEN)).thenReturn(
             Single.just(
                 MockContentHelper.provideListResidents()
             )
         )
 
-        residentsActivityViewModel.getLatestResidentList()
+        residentsActivityViewModel.getLatestResidentList(PIN)
 
         verify(liveDataObserver).onChanged(argumentCaptor.capture())
         assertEquals(MockContentHelper.provideListResidents(), argumentCaptor.value.data)
@@ -76,11 +93,13 @@ class ResidentsActivityViewModelTest {
     fun `getLatestResidentList when network error`() {
         val argumentCaptor = ArgumentCaptor.forClass(ViewState.Error::class.java)
 
-        `when`(mockResidentRepository.getResidentsFromApi()).thenReturn(
+        mockDecryptCalls()
+
+        `when`(mockResidentRepository.getResidentsFromApi(JWT_TOKEN)).thenReturn(
             Single.error(UnknownHostException())
         )
 
-        residentsActivityViewModel.getLatestResidentList()
+        residentsActivityViewModel.getLatestResidentList(PIN)
 
         verify(liveDataObserver).onChanged(argumentCaptor.capture())
 
@@ -128,5 +147,10 @@ class ResidentsActivityViewModelTest {
         verify(mockResidentRepository, never()).getResidentsFromCache()
 
         assertEquals(MockContentHelper.provideListResidents(), argumentCaptor.value.data)
+    }
+
+    private fun mockDecryptCalls() {
+        `when`(mockSharedPreferencesHandler.getEncryptedJwtToken()).thenReturn(Observable.just(ENCRYPTED_JWT_TOKEN))
+        `when`(mockAESCipher.decrypt(PIN, ENCRYPTED_JWT_TOKEN)).thenReturn(JWT_TOKEN)
     }
 }

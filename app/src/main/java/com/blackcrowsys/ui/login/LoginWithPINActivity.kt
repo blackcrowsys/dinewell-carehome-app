@@ -55,7 +55,7 @@ class LoginWithPINActivity : AppCompatActivity() {
             }
             is ViewState.Success<*> -> {
                 if (viewState.data as Boolean) {
-                    ResidentsActivity.startResidentsActivity(this)
+                    ResidentsActivity.startResidentsActivity(this, pinView.value)
                 } else {
                     showShortToastText(getString(R.string.pin_does_not_match))
                 }
