@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.blackcrowsys.R
 import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.ui.residentbio.ResidentBioActivity
 import kotlinx.android.synthetic.main.resident_rv_item.view.*
 
 class ResidentsAdapter :
@@ -30,6 +31,10 @@ class ResidentsAdapter :
             }
             itemView.tvResidentName.text =
                     itemView.context.getString(R.string.name_placeholder, firstName, surname)
+
+            itemView.setOnClickListener {
+                ResidentBioActivity.startResidentBioActivity(itemView.context, "1111")
+            }
         }
     }
 }

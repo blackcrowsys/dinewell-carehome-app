@@ -30,7 +30,7 @@
         <activity android:name=".ui.login.LoginWithPINActivity" />
         <activity android:name=".ui.pin.SetPINActivity" />
         <activity android:name=".ui.residents.ResidentsActivity" />
-        <activity android:name=".ui.residentbio.ResidentBioActivity"></activity>
+        <activity android:name=".ui.residentbio.ResidentBioActivity" />
     </application>
 
 </manifest>

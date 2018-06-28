@@ -36,4 +36,9 @@
     <string name="retry">Rever</string>
     <string name="no_results">No hay resultados</string>
     <string name="unable_to_save_pin">No se puede guardar el PIN. Inténtalo de nuevo</string>
+    <string name="room_number_building">Room 23, Building 5</string>
+    <string name="book_meal">Reservar comida</string>
+    <string name="allergies">Allergies</string>
+    <string name="incidents">Incidents</string>
+    <string name="meal_history">Meal History</string>
 </resources>

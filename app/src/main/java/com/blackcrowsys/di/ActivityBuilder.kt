@@ -6,6 +6,7 @@ import com.blackcrowsys.ui.login.di.LoginModule
 import com.blackcrowsys.ui.pin.SetPINActivity
 import com.blackcrowsys.ui.pin.di.SetPINActivityModule
 import com.blackcrowsys.ui.residentbio.ResidentBioActivity
+import com.blackcrowsys.ui.residentbio.di.ResidentBioModule
 import com.blackcrowsys.ui.residents.ResidentsActivity
 import com.blackcrowsys.ui.residents.di.ResidentsModule
 import com.blackcrowsys.ui.splash.SplashActivity
@@ -31,6 +32,6 @@ abstract class ActivityBuilder {
     @ContributesAndroidInjector(modules = [(ResidentsModule::class)])
     abstract fun bindResidentsActivity(): ResidentsActivity
 
-    @ContributesAndroidInjector(modules = [ResidentBioActivity::class])
+    @ContributesAndroidInjector(modules = [ResidentBioModule::class])
     abstract fun bindResidentBioActivity(): ResidentBioActivity
 }

@@ -15,12 +15,11 @@ import android.widget.SearchView
 import com.blackcrowsys.R
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.ui.ViewModelFactory
+import com.blackcrowsys.util.Constants.PIN_EXTRA
 import com.blackcrowsys.util.ViewState
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_residents.*
 import javax.inject.Inject
-
-const val PIN_EXTRA = "pin_extra"
 
 class ResidentsActivity : AppCompatActivity() {
 
