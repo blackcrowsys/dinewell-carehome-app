@@ -102,7 +102,7 @@ class SetPINActivity : AppCompatActivity() {
         when (viewState) {
             is ViewState.Success<*> -> {
                 Log.d("SetPINActivity", "Encrypted JWT token ${viewState.data}")
-                ResidentsActivity.startResidentsActivity(this)
+                ResidentsActivity.startResidentsActivity(this, pvSecond.value)
             }
             is ViewState.Error -> {
                 Log.e("SetPINActivity", "Error ${viewState.throwable.message}")

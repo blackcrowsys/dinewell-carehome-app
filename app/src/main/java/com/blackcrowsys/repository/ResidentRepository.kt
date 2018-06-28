@@ -15,8 +15,8 @@ class ResidentRepository @Inject constructor(
     private val residentDao: ResidentDao
 ) {
 
-    fun getResidentsFromApi(): Single<List<Resident>> {
-        return apiService.getResidents()
+    fun getResidentsFromApi(jwtToken: String): Single<List<Resident>> {
+        return apiService.getResidents(jwtToken)
             .flatMapObservable { Observable.fromIterable(it) }
             .flatMapSingle { it ->
                 residentDao.saveResident(Resident(it))
