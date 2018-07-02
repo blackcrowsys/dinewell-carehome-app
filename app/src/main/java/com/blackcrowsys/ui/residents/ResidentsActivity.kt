@@ -36,7 +36,7 @@ class ResidentsActivity : AppCompatActivity() {
 
     private lateinit var residentsActivityViewModel: ResidentsActivityViewModel
 
-    private val residentsAdapter = ResidentsAdapter()
+    private lateinit var residentsAdapter: ResidentsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -45,6 +45,8 @@ class ResidentsActivity : AppCompatActivity() {
 
         residentsActivityViewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ResidentsActivityViewModel::class.java)
+
+        residentsAdapter = ResidentsAdapter(intent.getStringExtra(PIN_EXTRA))
 
         rvResidents.apply {
             layoutManager = LinearLayoutManager(this@ResidentsActivity)

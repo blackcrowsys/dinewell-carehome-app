@@ -6,4 +6,5 @@ package com.blackcrowsys.util
 object Constants {
 
     const val PIN_EXTRA = "pin_extra"
+    const val RESIDENT_ID_EXTRA = "resident_id_extra"
 }

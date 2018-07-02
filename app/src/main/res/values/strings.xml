@@ -32,6 +32,7 @@
     <string name="search_for_resident_query">Search for a Resident</string>
     <string name="test_name">Jonathan Mendellsohn</string>
     <string name="name_placeholder">%1$s %2$s</string>
+    <string name="room_building_placeholder">%1s</string>
     <string name="unable_to_connect_to_be_error">Unable to connect to the server. Please try again.</string>
     <string name="retry">Retry</string>
     <string name="no_results">No results</string>

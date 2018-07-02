@@ -30,4 +30,6 @@ class ResidentRepository @Inject constructor(
     fun getResidentsGivenNameQuery(firstName: String, surname: String): Flowable<List<Resident>> {
         return residentDao.findResidentsGivenFirstNameSurnameSearch("%$firstName%", "%$surname%")
     }
+
+    fun getResidentGivenId(residentId: Int): Flowable<Resident> = residentDao.findResidentGivenId(residentId)
 }
