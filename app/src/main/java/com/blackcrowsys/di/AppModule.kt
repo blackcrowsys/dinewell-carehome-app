@@ -8,6 +8,7 @@ import com.blackcrowsys.api.util.HttpInterceptor
 import com.blackcrowsys.exceptions.ErrorMapper
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.persistence.CareHomeDatabase
+import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
 import com.blackcrowsys.persistence.dao.UserPermissionDao
 import com.blackcrowsys.util.SchedulerProvider
@@ -41,8 +42,10 @@ class AppModule {
     @Provides
     @Singleton
     fun provideGson(): Gson {
-        return GsonBuilder().setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                .create()
+        return GsonBuilder()
+            .setDateFormat("dd-MM-yyyy")
+            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+            .create()
     }
 
     @Provides
@@ -110,4 +113,9 @@ class AppModule {
     @Singleton
     fun provideResidentDao(careHomeDatabase: CareHomeDatabase): ResidentDao =
         careHomeDatabase.residentDao()
+
+    @Provides
+    @Singleton
+    fun provideResidentAllergyDao(careHomeDatabase: CareHomeDatabase): ResidentAllergyDao =
+            careHomeDatabase.residentAllergyDao()
 }

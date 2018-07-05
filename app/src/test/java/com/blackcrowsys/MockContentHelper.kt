@@ -24,5 +24,7 @@ class MockContentHelper {
             val residentTwo = Resident(1, "Bob", "Smith", "imageUrl", "202")
             return listOf(residentOne, residentTwo)
         }
+
+        fun provideSingleResident(): Resident = Resident(1, "Bob", "Smith", "imageUrl", "202")
     }
 }
