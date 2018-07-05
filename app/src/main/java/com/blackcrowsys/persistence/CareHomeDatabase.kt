@@ -2,6 +2,7 @@ package com.blackcrowsys.persistence
 
 import android.arch.persistence.room.Database
 import android.arch.persistence.room.RoomDatabase
+import com.blackcrowsys.persistence.dao.AllergyDao
 import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
 import com.blackcrowsys.persistence.dao.UserPermissionDao
@@ -19,4 +20,5 @@ abstract class CareHomeDatabase : RoomDatabase() {
     abstract fun userPermissionDao(): UserPermissionDao
     abstract fun residentDao(): ResidentDao
     abstract fun residentAllergyDao(): ResidentAllergyDao
+    abstract fun allergyDao(): AllergyDao
 }

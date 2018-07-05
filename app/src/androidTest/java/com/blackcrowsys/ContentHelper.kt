@@ -1,5 +1,6 @@
 package com.blackcrowsys
 
+import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Resident
 
 class ContentHelper {
@@ -16,5 +17,7 @@ class ContentHelper {
 
             return listOf(residentOne, residentTwo, residentThree, residentFour, residentFive)
         }
+
+        fun createAllergy(): Allergy = Allergy(1, "Milk")
     }
 }

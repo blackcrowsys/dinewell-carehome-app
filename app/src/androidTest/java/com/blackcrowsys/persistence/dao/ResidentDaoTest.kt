@@ -72,4 +72,19 @@ class ResidentDaoTest {
                     it.first().surname == it[1].surname
         }
     }
+
+    @Test
+    fun insertResidentAndCheckExistenceById() {
+        val testSubscriber = TestSubscriber<Resident>()
+
+        val resident = ContentHelper.createResident()
+        residentDao.saveResident(resident)
+        residentDao.findResidentGivenId(1)
+            .subscribe(testSubscriber)
+
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertValue { it.firstName == "Bob"
+                && it.surname == "Smith" && it.residentId == 1
+        }
+    }
 }
