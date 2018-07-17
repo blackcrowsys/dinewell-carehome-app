@@ -2,6 +2,7 @@ package com.blackcrowsys
 
 import com.blackcrowsys.api.models.ResidentResponse
 import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.persistence.entity.ResidentAllergy
 
 class MockContentHelper {
     companion object {
@@ -26,5 +27,13 @@ class MockContentHelper {
         }
 
         fun provideSingleResident(): Resident = Resident(1, "Bob", "Smith", "imageUrl", "202")
+
+        fun provideResidentAllergies(): List<ResidentAllergy> {
+            val residentAllergyOne = ResidentAllergy(1, 1, "Mild")
+            val residentAllergyTwo = ResidentAllergy(1, 2, "Severe")
+            val residentAllergyThree = ResidentAllergy(1, 4, "Very Mild")
+
+            return listOf(residentAllergyOne, residentAllergyTwo, residentAllergyThree)
+        }
     }
 }

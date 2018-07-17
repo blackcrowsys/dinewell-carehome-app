@@ -2,12 +2,17 @@ package com.blackcrowsys.repository
 
 import com.blackcrowsys.MockContentHelper
 import com.blackcrowsys.api.ApiService
+import com.blackcrowsys.persistence.dao.AllergyDao
+import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
+import com.blackcrowsys.persistence.datamodel.ResidentAllergyHolder
+import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Resident
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
 import io.reactivex.subscribers.TestSubscriber
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
@@ -24,12 +29,19 @@ class ResidentRepositoryTest {
     @Mock
     private lateinit var mockResidentDao: ResidentDao
 
+    @Mock
+    private lateinit var mockResidentAllergyDao: ResidentAllergyDao
+
+    @Mock
+    private lateinit var mockAllergyDao: AllergyDao
+
     private lateinit var residentRepository: ResidentRepository
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
-        residentRepository = ResidentRepository(mockApiService, mockResidentDao)
+        residentRepository = ResidentRepository(mockApiService, mockResidentDao,
+            mockResidentAllergyDao, mockAllergyDao)
     }
 
     @Test
@@ -65,5 +77,34 @@ class ResidentRepositoryTest {
         testSubscriber.assertValue {
             it[0].residentId == 1 && it[1].residentId == 2 && it[2].residentId == 3
         }
+    }
+
+    @Test
+    fun getResidentAllergy() {
+        `when`(mockResidentAllergyDao.findAllResidentAllergies(1)).thenReturn(
+            Flowable.just(MockContentHelper.provideResidentAllergies())
+        )
+        `when`(mockAllergyDao.findAllergenById(1)).thenReturn(Flowable.just(Allergy(1, "Milk")))
+        `when`(mockAllergyDao.findAllergenById(2)).thenReturn(Flowable.just(Allergy(2, "Gluten")))
+        `when`(mockAllergyDao.findAllergenById(4)).thenReturn(Flowable.just(Allergy(4, "Wheat")))
+
+        val testSubscriber = TestSubscriber<ResidentAllergyHolder>()
+
+        residentRepository.getResidentAllergy(1)
+            .subscribe(testSubscriber)
+
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertValueCount(3)
+        val firstResidentAllergyHolder = testSubscriber.events.first().first() as ResidentAllergyHolder
+        assertEquals("Milk", firstResidentAllergyHolder.allergy.allergen)
+        assertEquals("Mild", firstResidentAllergyHolder.residentAllergy.severity)
+
+        val secondResidentAllergyHolder = testSubscriber.events.first()[1] as ResidentAllergyHolder
+        assertEquals("Gluten", secondResidentAllergyHolder.allergy.allergen)
+        assertEquals("Severe", secondResidentAllergyHolder.residentAllergy.severity)
+
+        val thirdResidentAllergyHolder = testSubscriber.events.first()[2] as ResidentAllergyHolder
+        assertEquals("Wheat", thirdResidentAllergyHolder.allergy.allergen)
+        assertEquals("Very Mild", thirdResidentAllergyHolder.residentAllergy.severity)
     }
 }

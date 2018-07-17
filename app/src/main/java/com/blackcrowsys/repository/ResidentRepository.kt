@@ -1,7 +1,10 @@
 package com.blackcrowsys.repository
 
 import com.blackcrowsys.api.ApiService
+import com.blackcrowsys.persistence.dao.AllergyDao
+import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
+import com.blackcrowsys.persistence.datamodel.ResidentAllergyHolder
 import com.blackcrowsys.persistence.entity.Resident
 import io.reactivex.Flowable
 import io.reactivex.Observable
@@ -12,7 +15,9 @@ import javax.inject.Singleton
 @Singleton
 class ResidentRepository @Inject constructor(
     private val apiService: ApiService,
-    private val residentDao: ResidentDao
+    private val residentDao: ResidentDao,
+    private val residentAllergyDao: ResidentAllergyDao,
+    private val allergyDao: AllergyDao
 ) {
 
     fun getResidentsFromApi(jwtToken: String): Single<List<Resident>> {
@@ -32,4 +37,16 @@ class ResidentRepository @Inject constructor(
     }
 
     fun getResidentGivenId(residentId: Int): Flowable<Resident> = residentDao.findResidentGivenId(residentId)
+
+    /**
+     * This emits each resident allergy one by one as it's a Flowable from a continuous source.
+     */
+    fun getResidentAllergy(residentId: Int): Flowable<ResidentAllergyHolder> {
+        return residentAllergyDao.findAllResidentAllergies(residentId)
+            .flatMapIterable { it }
+            .flatMap { residentAllergy ->
+                allergyDao.findAllergenById(residentAllergy.allergyId)
+                    .map { ResidentAllergyHolder(it, residentAllergy) }
+            }
+    }
 }

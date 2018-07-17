@@ -2,6 +2,7 @@ package com.blackcrowsys
 
 import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.persistence.entity.ResidentAllergy
 
 class ContentHelper {
     companion object {
@@ -19,5 +20,23 @@ class ContentHelper {
         }
 
         fun createAllergy(): Allergy = Allergy(1, "Milk")
+
+        fun createAllergies(): List<Allergy> {
+            val allergyOne = Allergy(1, "Milk")
+            val allergyTwo = Allergy(2, "Gluten")
+            val allergyThree = Allergy(3, "Eggs")
+            val allergyFour = Allergy(4, "Wheat")
+            val allergyFive = Allergy(5, "Fish")
+
+            return listOf(allergyOne, allergyTwo, allergyThree, allergyFour, allergyFive)
+        }
+
+        fun createResidentAllergies(): List<ResidentAllergy> {
+            val residentAllergyOne = ResidentAllergy(1, 1, "Mild")
+            val residentAllergyTwo = ResidentAllergy(1, 2, "Severe")
+            val residentAllergyThree = ResidentAllergy(1, 4, "Very Mild")
+
+            return listOf(residentAllergyOne, residentAllergyTwo, residentAllergyThree)
+        }
     }
 }

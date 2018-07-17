@@ -15,4 +15,7 @@ interface AllergyDao {
 
     @Query("SELECT * FROM Allergy")
     fun findAllAllergies(): Flowable<List<Allergy>>
+
+    @Query("SELECT * FROM Allergy WHERE allergenId = :allergenId")
+    fun findAllergenById(allergenId: Int): Flowable<Allergy>
 }
