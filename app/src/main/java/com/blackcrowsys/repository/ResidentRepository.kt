@@ -1,11 +1,14 @@
 package com.blackcrowsys.repository
 
 import com.blackcrowsys.api.ApiService
+import com.blackcrowsys.api.models.ResidentBioResponse
 import com.blackcrowsys.persistence.dao.AllergyDao
 import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
 import com.blackcrowsys.persistence.datamodel.ResidentAllergyHolder
+import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.persistence.entity.ResidentAllergy
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -47,6 +50,20 @@ class ResidentRepository @Inject constructor(
             .flatMap { residentAllergy ->
                 allergyDao.findAllergenById(residentAllergy.allergyId)
                     .map { ResidentAllergyHolder(it, residentAllergy) }
+            }
+    }
+
+    fun getResidentBioFromApi(jwtToken: String, residentId: Int): Single<ResidentBioResponse> {
+        return apiService.getResidentBio(jwtToken, residentId)
+            .flatMap { residentBio ->
+                Observable.fromIterable(residentBio.allergies)
+                    .map {
+                        allergyDao.saveAllergy(Allergy(it.allergenId, it.allergen))
+                        residentAllergyDao.saveResidentAllergy(ResidentAllergy(residentId, it.allergenId, it.severity))
+                        it
+                    }
+                    .toList()
+                    .flatMap { Single.just(residentBio) }
             }
     }
 }

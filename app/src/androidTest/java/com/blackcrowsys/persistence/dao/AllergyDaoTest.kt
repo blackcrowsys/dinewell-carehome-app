@@ -44,7 +44,7 @@ class AllergyDaoTest {
         val testSubscriber = TestSubscriber<List<Allergy>>()
 
         val allergy = ContentHelper.createAllergy()
-        allergyDao.insertAllergy(allergy)
+        allergyDao.saveAllergy(allergy)
         allergyDao.findAllAllergies().subscribe(testSubscriber)
 
         testSubscriber.assertNoErrors()

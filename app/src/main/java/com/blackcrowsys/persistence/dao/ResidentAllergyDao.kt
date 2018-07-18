@@ -14,5 +14,5 @@ interface ResidentAllergyDao {
     fun findAllResidentAllergies(residentId: Int): Flowable<List<ResidentAllergy>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertResidentAllergy(residentAllergy: ResidentAllergy)
+    fun saveResidentAllergy(residentAllergy: ResidentAllergy)
 }

@@ -51,11 +51,11 @@ class ResidentAllergyDaoTest {
         residentDao.saveResident(ContentHelper.createResident())
 
         ContentHelper.createAllergies().forEach {
-            allergyDao.insertAllergy(it)
+            allergyDao.saveAllergy(it)
         }
 
         ContentHelper.createResidentAllergies().forEach {
-            residentAllergyDao.insertResidentAllergy(it)
+            residentAllergyDao.saveResidentAllergy(it)
         }
 
         residentAllergyDao.findAllResidentAllergies(1)

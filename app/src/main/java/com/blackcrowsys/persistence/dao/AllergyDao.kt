@@ -11,7 +11,7 @@ import io.reactivex.Flowable
 interface AllergyDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertAllergy(allergy: Allergy)
+    fun saveAllergy(allergy: Allergy)
 
     @Query("SELECT * FROM Allergy")
     fun findAllAllergies(): Flowable<List<Allergy>>

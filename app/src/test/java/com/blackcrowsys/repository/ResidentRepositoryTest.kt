@@ -2,12 +2,14 @@ package com.blackcrowsys.repository
 
 import com.blackcrowsys.MockContentHelper
 import com.blackcrowsys.api.ApiService
+import com.blackcrowsys.api.models.ResidentBioResponse
 import com.blackcrowsys.persistence.dao.AllergyDao
 import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
 import com.blackcrowsys.persistence.datamodel.ResidentAllergyHolder
 import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.persistence.entity.ResidentAllergy
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -17,8 +19,7 @@ import org.junit.Before
 import org.junit.Test
 
 import org.mockito.Mock
-import org.mockito.Mockito.`when`
-import org.mockito.Mockito.doNothing
+import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
 
 class ResidentRepositoryTest {
@@ -106,5 +107,29 @@ class ResidentRepositoryTest {
         val thirdResidentAllergyHolder = testSubscriber.events.first()[2] as ResidentAllergyHolder
         assertEquals("Wheat", thirdResidentAllergyHolder.allergy.allergen)
         assertEquals("Very Mild", thirdResidentAllergyHolder.residentAllergy.severity)
+    }
+
+    @Test
+    fun getResidentBioFromApi() {
+        `when`(mockApiService.getResidentBio("jwtToken", 1)).thenReturn(Single.just(MockContentHelper.provideResidentBio()))
+        doNothing().`when`(mockAllergyDao).saveAllergy(Allergy(1, "Gluten"))
+        doNothing().`when`(mockAllergyDao).saveAllergy(Allergy(2, "Milk"))
+        doNothing().`when`(mockResidentAllergyDao).saveResidentAllergy(ResidentAllergy(1, 1, "Mild"))
+        doNothing().`when`(mockResidentAllergyDao).saveResidentAllergy(ResidentAllergy(1, 2, "Severe"))
+
+        val testObserver = TestObserver<ResidentBioResponse>()
+
+        residentRepository.getResidentBioFromApi("jwtToken", 1)
+            .subscribe(testObserver)
+
+        verify(mockAllergyDao).saveAllergy(Allergy(1, "Gluten"))
+        verify(mockAllergyDao).saveAllergy(Allergy(2, "Milk"))
+        verify(mockResidentAllergyDao).saveResidentAllergy(ResidentAllergy(1, 1, "Mild"))
+        verify(mockResidentAllergyDao).saveResidentAllergy(ResidentAllergy(1, 2, "Severe"))
+
+        testObserver.assertNoErrors()
+        testObserver.assertValue { it.residentId == 1 && it.allergies.count() == 2 &&
+                it.incidents.count() == 2 && it.mealHistory.count() == 2
+        }
     }
 }
