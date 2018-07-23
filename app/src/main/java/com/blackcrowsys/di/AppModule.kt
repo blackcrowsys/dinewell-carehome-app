@@ -8,10 +8,7 @@ import com.blackcrowsys.api.util.HttpInterceptor
 import com.blackcrowsys.exceptions.ErrorMapper
 import com.blackcrowsys.exceptions.ExceptionTransformer
 import com.blackcrowsys.persistence.CareHomeDatabase
-import com.blackcrowsys.persistence.dao.AllergyDao
-import com.blackcrowsys.persistence.dao.ResidentAllergyDao
-import com.blackcrowsys.persistence.dao.ResidentDao
-import com.blackcrowsys.persistence.dao.UserPermissionDao
+import com.blackcrowsys.persistence.dao.*
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import com.f2prateek.rx.preferences2.RxSharedPreferences
@@ -124,4 +121,9 @@ class AppModule {
     @Singleton
     fun provideAllergyDao(careHomeDatabase: CareHomeDatabase): AllergyDao =
             careHomeDatabase.allergyDao()
+
+    @Provides
+    @Singleton
+    fun provideIncidentDao(careHomeDatabase: CareHomeDatabase): IncidentDao =
+            careHomeDatabase.incidentDao()
 }

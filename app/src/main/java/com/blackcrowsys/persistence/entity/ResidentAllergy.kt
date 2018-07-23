@@ -17,7 +17,8 @@ import android.arch.persistence.room.ForeignKey.CASCADE
         ForeignKey(
             entity = Allergy::class,
             parentColumns = ["allergenId"],
-            childColumns = ["allergyId"]
+            childColumns = ["allergyId"],
+            onDelete = CASCADE
         )
     ]
 )

@@ -1,7 +1,6 @@
 package com.blackcrowsys.api.models
 
 import com.google.gson.annotations.SerializedName
-import java.util.*
 
 data class ResidentBioResponse(
     @SerializedName("residentId")
@@ -28,7 +27,7 @@ data class IncidentResponse(
     val type: String,
     val description: String,
     val priority: String,
-    val date: Date
+    val date: String
 )
 
 data class MealBookingItemResponse(
@@ -40,5 +39,5 @@ data class MealBookingItemResponse(
     @SerializedName("percentageCompleted")
     val percentageCompleted: Int,
     val comments: String,
-    val date: Date
+    val date: String
 )
