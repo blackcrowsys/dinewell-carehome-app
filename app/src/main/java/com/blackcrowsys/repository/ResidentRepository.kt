@@ -2,11 +2,14 @@ package com.blackcrowsys.repository
 
 import com.blackcrowsys.api.ApiService
 import com.blackcrowsys.api.models.ResidentBioResponse
+import com.blackcrowsys.functionextensions.toDate
 import com.blackcrowsys.persistence.dao.AllergyDao
+import com.blackcrowsys.persistence.dao.IncidentDao
 import com.blackcrowsys.persistence.dao.ResidentAllergyDao
 import com.blackcrowsys.persistence.dao.ResidentDao
 import com.blackcrowsys.persistence.datamodel.ResidentAllergyHolder
 import com.blackcrowsys.persistence.entity.Allergy
+import com.blackcrowsys.persistence.entity.Incident
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.persistence.entity.ResidentAllergy
 import io.reactivex.Flowable
@@ -20,7 +23,8 @@ class ResidentRepository @Inject constructor(
     private val apiService: ApiService,
     private val residentDao: ResidentDao,
     private val residentAllergyDao: ResidentAllergyDao,
-    private val allergyDao: AllergyDao
+    private val allergyDao: AllergyDao,
+    private val incidentDao: IncidentDao
 ) {
 
     fun getResidentsFromApi(jwtToken: String): Single<List<Resident>> {
@@ -60,6 +64,12 @@ class ResidentRepository @Inject constructor(
                     .map {
                         allergyDao.saveAllergy(Allergy(it.allergenId, it.allergen))
                         residentAllergyDao.saveResidentAllergy(ResidentAllergy(residentId, it.allergenId, it.severity))
+                        it
+                    }
+                    .toList()
+                    .flatMapObservable { Observable.fromIterable(residentBio.incidents) }
+                    .map {
+                        incidentDao.saveIncident(Incident(it.incidentId, it.type, it.description, it.priority, it.date.toDate(), residentId))
                         it
                     }
                     .toList()

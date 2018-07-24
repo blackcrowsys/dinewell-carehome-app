@@ -1,10 +1,10 @@
 package com.blackcrowsys
 
+import com.blackcrowsys.functionextensions.toDate
 import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Incident
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.persistence.entity.ResidentAllergy
-import java.text.SimpleDateFormat
 
 class ContentHelper {
     companion object {
@@ -42,11 +42,9 @@ class ContentHelper {
         }
 
         fun createIncidentsForResident(): List<Incident> {
-            val sdf = SimpleDateFormat("dd/MM/yyyy")
-            val dateString = "23/07/2018"
-            val dateObject = sdf.parse(dateString)
-            val incidentOne = Incident(1, "Food", "Resident was angry at serving of food later than normal", "MEDIUM", dateObject, 1)
-            val incidentTwo = Incident(2, "Family", "A family bereavement occurred today which distressed the Resident", "HIGH", dateObject, 1)
+            val date = "23/07/2018".toDate()
+            val incidentOne = Incident(1, "Food", "Resident was angry at serving of food later than normal", "MEDIUM", date, 1)
+            val incidentTwo = Incident(2, "Family", "A family bereavement occurred today which distressed the Resident", "HIGH", date, 1)
 
             return listOf(incidentOne, incidentTwo)
         }

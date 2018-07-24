@@ -1,6 +1,8 @@
 package com.blackcrowsys.functionextensions
 
 import java.security.MessageDigest
+import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.experimental.and
 
 /**
@@ -21,4 +23,9 @@ fun String.hashString(): String {
 
 fun String.containSameCharacters(): Boolean {
     return this.indices.none { this[it] != this[0] }
+}
+
+fun String.toDate(): Date {
+    val df = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+    return df.parse(this)
 }
