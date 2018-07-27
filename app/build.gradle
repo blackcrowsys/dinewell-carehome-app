@@ -80,7 +80,7 @@ dependencies {
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpVersion"
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
@@ -96,7 +96,7 @@ dependencies {
 
     implementation "com.github.douglasjunior:android-simple-tooltip:0.2.2"
 
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.2'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-inline:2.11.0'

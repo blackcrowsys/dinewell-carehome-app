@@ -51,9 +51,13 @@ class ResidentBioActivity : AppCompatActivity() {
         residentBioActivityViewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ResidentBioActivityViewModel::class.java)
 
-        residentBioActivityViewModel.retrieveResident(intent.getIntExtra(RESIDENT_ID_EXTRA, 0))
+        val residentId = intent.getIntExtra(RESIDENT_ID_EXTRA, 0)
 
-        bioPagerAdapter = ResidentBioPagerAdapter(supportFragmentManager, arrayOf(allergiesTitle, incidentsTitle, mealHistoryTitle))
+        residentBioActivityViewModel.retrieveResident(residentId)
+
+        residentBioActivityViewModel.retrieveResidentBio(intent.getStringExtra(PIN_EXTRA), residentId)
+
+        bioPagerAdapter = ResidentBioPagerAdapter(supportFragmentManager, arrayOf(allergiesTitle, incidentsTitle, mealHistoryTitle), residentId)
         viewPager.adapter = bioPagerAdapter
 
         tlResidentTabs.setupWithViewPager(viewPager)

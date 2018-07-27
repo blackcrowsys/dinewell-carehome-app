@@ -9,7 +9,8 @@ import com.blackcrowsys.ui.residentbio.fragments.ResidentBioMealHistoryFragment
 
 class ResidentBioPagerAdapter(
     fragmentManager: FragmentManager,
-    private val tabsArray: Array<String>
+    private val tabsArray: Array<String>,
+    private val residentId: Int
 ) : FragmentStatePagerAdapter(fragmentManager) {
 
     override fun getCount(): Int = 3
@@ -20,7 +21,7 @@ class ResidentBioPagerAdapter(
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> ResidentBioAllergyFragment.newInstance()
+            0 -> ResidentBioAllergyFragment.newInstance(residentId)
             1 -> ResidentBioIncidentFragment.newInstance()
             2 -> ResidentBioMealHistoryFragment.newInstance()
             else -> throw NotImplementedError()

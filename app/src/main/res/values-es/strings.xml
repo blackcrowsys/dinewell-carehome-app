@@ -42,4 +42,5 @@
     <string name="allergies">Allergies</string>
     <string name="incidents">Incidents</string>
     <string name="meal_history">Meal History</string>
+    <string name="allergies_placeholder">%1$s, %2$s severity \n</string>
 </resources>

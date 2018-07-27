@@ -22,6 +22,8 @@ class ResidentBioActivityViewModel(
     private val compositeDisposable by lazy { CompositeDisposable() }
 
     var residentViewState = MutableLiveData<ViewState>()
+    var residentBioViewState = MutableLiveData<ViewState>()
+    var residentAllergiesViewState = MutableLiveData<ViewState>()
 
     override fun onCleared() {
         compositeDisposable.clear()
@@ -35,6 +37,31 @@ class ResidentBioActivityViewModel(
                 residentViewState.value = ViewState.Success(it)
             }, onError = {
                 residentViewState.value = ViewState.Error(it)
+            })
+        )
+    }
+
+    fun retrieveResidentBio(pin: String, residentId: Int) {
+        compositeDisposable.add(sharedPreferencesHandler.getEncryptedJwtToken()
+            .map { aesCipher.decrypt(pin, it) }
+            .flatMapSingle { residentRepository.getResidentBioFromApi(it, residentId) }
+            .compose(schedulerProvider.getSchedulersForObservable())
+            .compose(exceptionTransformer.mapExceptionsForObservable())
+            .subscribeBy(onNext = {
+                residentBioViewState.value = ViewState.Success(it)
+            }, onError = {
+                residentBioViewState.value = ViewState.Error(it)
+            })
+        )
+    }
+
+    fun retrieveResidentAllergiesFromDb(residentId: Int) {
+        compositeDisposable.add(residentRepository.getResidentAllergy(residentId)
+            .compose(schedulerProvider.getSchedulersForFlowable())
+            .subscribeBy(onNext = {
+                residentAllergiesViewState.value = ViewState.Success(it)
+            }, onError = {
+                residentAllergiesViewState.value = ViewState.Error(it)
             })
         )
     }
