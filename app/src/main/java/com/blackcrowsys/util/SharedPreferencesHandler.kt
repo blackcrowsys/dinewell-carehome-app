@@ -6,6 +6,7 @@ import io.reactivex.Observable
 const val ENDPOINT_URL_KEY = "endpoint_url_key"
 const val PIN_HASH_KEY = "pin_hash_key"
 const val ENCRYPTED_JWT_TOKEN_KEY = "encrypted_jwt_key"
+const val DB_REFRESH_TIMESTAMP_KEY = "db_refresh_timestamp_key"
 
 class SharedPreferencesHandler(private val rxSharedPreferences: RxSharedPreferences) {
 
@@ -26,5 +27,12 @@ class SharedPreferencesHandler(private val rxSharedPreferences: RxSharedPreferen
 
     fun getEncryptedJwtToken(): Observable<String> {
         return rxSharedPreferences.getString(ENCRYPTED_JWT_TOKEN_KEY).asObservable()
+    }
+
+    fun setDbRefreshTimestamp(timestamp: Long) = rxSharedPreferences
+        .getLong(DB_REFRESH_TIMESTAMP_KEY).set(timestamp)
+
+    fun getDbRefreshTimestamp(): Long {
+        return rxSharedPreferences.getLong(DB_REFRESH_TIMESTAMP_KEY).get()
     }
 }

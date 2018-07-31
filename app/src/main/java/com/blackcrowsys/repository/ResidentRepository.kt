@@ -12,6 +12,7 @@ import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Incident
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.persistence.entity.ResidentAllergy
+import com.blackcrowsys.util.DateTimeHandler
 import io.reactivex.Flowable
 import io.reactivex.Observable
 import io.reactivex.Single
@@ -24,17 +25,34 @@ class ResidentRepository @Inject constructor(
     private val residentDao: ResidentDao,
     private val residentAllergyDao: ResidentAllergyDao,
     private val allergyDao: AllergyDao,
-    private val incidentDao: IncidentDao
+    private val incidentDao: IncidentDao,
+    private val dateTimeHandler: DateTimeHandler
 ) {
 
-    fun getResidentsFromApi(jwtToken: String): Single<List<Resident>> {
+    fun getResidents(jwtToken: String): Flowable<List<Resident>> {
+        val fromApi = Flowable.just(dateTimeHandler.isCacheStale(System.currentTimeMillis()))
+            .filter { it }
+            .flatMap { getResidentsFromApi(jwtToken) }
+
+        val fromDb = Flowable.just(dateTimeHandler.isCacheStale(System.currentTimeMillis()))
+            .filter { !it }
+            .flatMap { getResidentsFromCache() }
+
+        return Flowable.concat(fromApi, fromDb)
+    }
+
+    fun getResidentsFromApi(jwtToken: String): Flowable<List<Resident>> {
         return apiService.getResidents(jwtToken)
-            .flatMapObservable { Observable.fromIterable(it) }
-            .flatMapSingle { it ->
+            .flatMapObservable {
+                dateTimeHandler.setDateTimeStamp(System.currentTimeMillis())
+                Observable.fromIterable(it)
+            }
+            .flatMap { it ->
                 residentDao.saveResident(Resident(it))
-                Single.just(Resident(it))
+                Observable.just(Resident(it))
             }
             .toList()
+            .toFlowable()
     }
 
     fun getResidentsFromCache(): Flowable<List<Resident>> = residentDao.findAllResidents()

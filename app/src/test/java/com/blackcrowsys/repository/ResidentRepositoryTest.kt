@@ -13,6 +13,7 @@ import com.blackcrowsys.persistence.entity.Allergy
 import com.blackcrowsys.persistence.entity.Incident
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.persistence.entity.ResidentAllergy
+import com.blackcrowsys.util.DateTimeHandler
 import io.reactivex.Flowable
 import io.reactivex.Single
 import io.reactivex.observers.TestObserver
@@ -20,6 +21,7 @@ import io.reactivex.subscribers.TestSubscriber
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import org.mockito.ArgumentMatchers
 
 import org.mockito.Mock
 import org.mockito.Mockito.*
@@ -42,48 +44,48 @@ class ResidentRepositoryTest {
     @Mock
     private lateinit var mockIncidentDao: IncidentDao
 
+    @Mock
+    private lateinit var mockDateTimeHandler: DateTimeHandler
+
     private lateinit var residentRepository: ResidentRepository
+
+    private val jwtToken = "jwt"
 
     @Before
     fun setUp() {
         MockitoAnnotations.initMocks(this)
         residentRepository = ResidentRepository(mockApiService, mockResidentDao,
-            mockResidentAllergyDao, mockAllergyDao, mockIncidentDao)
+            mockResidentAllergyDao, mockAllergyDao, mockIncidentDao, mockDateTimeHandler)
+    }
+
+    @Test
+    fun `getResidents() when cache is stale`() {
+        `when`(mockDateTimeHandler.isCacheStale(ArgumentMatchers.anyLong())).thenReturn(true)
+
+        retrieveResidentsFromApi()
+
+        verify(mockApiService).getResidents(jwtToken)
+        verify(mockResidentDao, never()).findAllResidents()
+    }
+
+    @Test
+    fun `getResidents() when cache is not stale`() {
+        `when`(mockDateTimeHandler.isCacheStale(ArgumentMatchers.anyLong())).thenReturn(false)
+
+        retrieveResidentsFromCache()
+
+        verify(mockApiService, never()).getResidents(jwtToken)
+        verify(mockResidentDao).findAllResidents()
     }
 
     @Test
     fun getResidentsFromApi() {
-        val jwtToken = "jwt"
-        val residentResponseList = MockContentHelper.provideListResidentsResponse()
-        `when`(mockApiService.getResidents(jwtToken)).thenReturn(Single.just(residentResponseList))
-        doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[0]))
-        doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[1]))
-        doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[2]))
-
-        val testObserver = TestObserver<List<Resident>>()
-
-        residentRepository.getResidentsFromApi(jwtToken)
-            .subscribe(testObserver)
-
-        testObserver.assertNoErrors()
-        testObserver.assertValue {
-            it[0].residentId == 1 && it[1].residentId == 2 && it[2].residentId == 3
-        }
+        retrieveResidentsFromApi()
     }
 
     @Test
     fun getResidentsFromCache() {
-        `when`(mockResidentDao.findAllResidents()).thenReturn(Flowable.just(MockContentHelper.provideListResidents()))
-
-        val testSubscriber = TestSubscriber<List<Resident>>()
-
-        residentRepository.getResidentsFromCache()
-            .subscribe(testSubscriber)
-
-        testSubscriber.assertNoErrors()
-        testSubscriber.assertValue {
-            it[0].residentId == 1 && it[1].residentId == 2 && it[2].residentId == 3
-        }
+        retrieveResidentsFromCache()
     }
 
     @Test
@@ -144,6 +146,39 @@ class ResidentRepositoryTest {
         testObserver.assertNoErrors()
         testObserver.assertValue { it.residentId == 1 && it.allergies.count() == 2 &&
                 it.incidents.count() == 2 && it.mealHistory.count() == 2
+        }
+    }
+
+    private fun retrieveResidentsFromApi() {
+        val residentResponseList = MockContentHelper.provideListResidentsResponse()
+        `when`(mockApiService.getResidents(jwtToken)).thenReturn(Single.just(residentResponseList))
+        doNothing().`when`(mockDateTimeHandler).setDateTimeStamp(ArgumentMatchers.anyLong())
+        doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[0]))
+        doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[1]))
+        doNothing().`when`(mockResidentDao).saveResident(Resident(residentResponseList[2]))
+
+        val testSubscriber = TestSubscriber<List<Resident>>()
+
+        residentRepository.getResidentsFromApi(jwtToken)
+            .subscribe(testSubscriber)
+
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertValue {
+            it[0].residentId == 1 && it[1].residentId == 2 && it[2].residentId == 3
+        }
+    }
+
+    private fun retrieveResidentsFromCache() {
+        `when`(mockResidentDao.findAllResidents()).thenReturn(Flowable.just(MockContentHelper.provideListResidents()))
+
+        val testSubscriber = TestSubscriber<List<Resident>>()
+
+        residentRepository.getResidentsFromCache()
+            .subscribe(testSubscriber)
+
+        testSubscriber.assertNoErrors()
+        testSubscriber.assertValue {
+            it[0].residentId == 1 && it[1].residentId == 2 && it[2].residentId == 3
         }
     }
 }
