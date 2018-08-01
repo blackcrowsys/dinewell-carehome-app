@@ -15,12 +15,11 @@ import android.widget.SearchView
 import com.blackcrowsys.R
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.ui.ViewModelFactory
+import com.blackcrowsys.util.Constants.PIN_EXTRA
 import com.blackcrowsys.util.ViewState
 import dagger.android.AndroidInjection
 import kotlinx.android.synthetic.main.activity_residents.*
 import javax.inject.Inject
-
-const val PIN_EXTRA = "pin_extra"
 
 class ResidentsActivity : AppCompatActivity() {
 
@@ -37,7 +36,7 @@ class ResidentsActivity : AppCompatActivity() {
 
     private lateinit var residentsActivityViewModel: ResidentsActivityViewModel
 
-    private val residentsAdapter = ResidentsAdapter()
+    private lateinit var residentsAdapter: ResidentsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -46,6 +45,8 @@ class ResidentsActivity : AppCompatActivity() {
 
         residentsActivityViewModel = ViewModelProviders.of(this, viewModelFactory)
             .get(ResidentsActivityViewModel::class.java)
+
+        residentsAdapter = ResidentsAdapter(intent.getStringExtra(PIN_EXTRA))
 
         rvResidents.apply {
             layoutManager = LinearLayoutManager(this@ResidentsActivity)

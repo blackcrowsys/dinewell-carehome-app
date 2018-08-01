@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_vertical_margin"
+    android:paddingStart="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_horizontal_margin"
+    tools:context=".ui.residentbio.ResidentBioActivity">
+
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/ivResidentBioImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:placeholderImage="@drawable/ic_person_black"
+        app:placeholderImageScaleType="fitCenter"
+        app:roundAsCircle="true" />
+
+    <TextView
+        android:id="@+id/tvResidentBioName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="marquee"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:singleLine="true"
+        android:textColor="@color/primaryText"
+        android:textSize="20sp"
+        app:layout_constraintStart_toEndOf="@id/ivResidentBioImage"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="@string/test_name" />
+
+    <TextView
+        android:id="@+id/tvResidentBioRoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:ellipsize="marquee"
+        android:paddingEnd="24dp"
+        android:paddingStart="24dp"
+        android:singleLine="true"
+        android:textColor="@color/primaryText"
+        android:textSize="16sp"
+        app:layout_constraintStart_toEndOf="@id/ivResidentBioImage"
+        app:layout_constraintTop_toBottomOf="@id/tvResidentBioName"
+        tools:text="@string/room_number_building" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/btnLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="4dp"
+        android:background="@color/colorPrimaryDark"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:text="@string/book_meal"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toEndOf="@id/ivResidentBioImage"
+        app:layout_constraintTop_toBottomOf="@id/tvResidentBioRoom" />
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_horizontal_margin"
+        android:background="@color/divider"
+        app:layout_constraintTop_toBottomOf="@id/ivResidentBioImage" />
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tlResidentTabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider">
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tbResidentBioAllergies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/allergies" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tbResidentBioIncidents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/incidents" />
+
+        <android.support.design.widget.TabItem
+            android:id="@+id/tbResidentBioMealHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/meal_history" />
+    </android.support.design.widget.TabLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tlResidentTabs" />
+
+</android.support.constraint.ConstraintLayout>

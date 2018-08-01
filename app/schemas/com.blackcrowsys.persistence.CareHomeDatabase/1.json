@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "00fe135d84cc40ea46864486494dac0e",
+    "identityHash": "7a6a93fc6d7fe6878c95d88a53c5600c",
     "entities": [
       {
         "tableName": "UserPermission",
@@ -88,11 +88,155 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "Allergy",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`allergenId` INTEGER NOT NULL, `allergen` TEXT NOT NULL, PRIMARY KEY(`allergenId`))",
+        "fields": [
+          {
+            "fieldPath": "allergenId",
+            "columnName": "allergenId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "allergen",
+            "columnName": "allergen",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "allergenId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "ResidentAllergy",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`residentId` INTEGER NOT NULL, `allergyId` INTEGER NOT NULL, `severity` TEXT NOT NULL, PRIMARY KEY(`residentId`, `allergyId`), FOREIGN KEY(`residentId`) REFERENCES `Resident`(`residentId`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`allergyId`) REFERENCES `Allergy`(`allergenId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "residentId",
+            "columnName": "residentId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "allergyId",
+            "columnName": "allergyId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "severity",
+            "columnName": "severity",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "residentId",
+            "allergyId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "Resident",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "residentId"
+            ],
+            "referencedColumns": [
+              "residentId"
+            ]
+          },
+          {
+            "table": "Allergy",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "allergyId"
+            ],
+            "referencedColumns": [
+              "allergenId"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "Incident",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`incidentId` INTEGER NOT NULL, `type` TEXT NOT NULL, `description` TEXT NOT NULL, `priority` TEXT NOT NULL, `date` TEXT NOT NULL, `residentId` INTEGER NOT NULL, PRIMARY KEY(`incidentId`), FOREIGN KEY(`residentId`) REFERENCES `Resident`(`residentId`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "incidentId",
+            "columnName": "incidentId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "priority",
+            "columnName": "priority",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "residentId",
+            "columnName": "residentId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "incidentId"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "Resident",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "residentId"
+            ],
+            "referencedColumns": [
+              "residentId"
+            ]
+          }
+        ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"00fe135d84cc40ea46864486494dac0e\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"7a6a93fc6d7fe6878c95d88a53c5600c\")"
     ]
   }
 }

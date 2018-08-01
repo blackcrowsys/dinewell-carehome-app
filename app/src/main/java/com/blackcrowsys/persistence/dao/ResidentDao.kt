@@ -21,4 +21,7 @@ interface ResidentDao {
         firstName: String,
         surname: String
     ): Flowable<List<Resident>>
+
+    @Query("SELECT * FROM Resident WHERE residentId = :residentId LIMIT 1")
+    fun findResidentGivenId(residentId: Int): Flowable<Resident>
 }

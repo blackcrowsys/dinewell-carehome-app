@@ -9,6 +9,7 @@ import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.ui.login.LoginWithApiActivityViewModel
 import com.blackcrowsys.ui.login.LoginWithPINActivityViewModel
 import com.blackcrowsys.ui.pin.SetPINActivityViewModel
+import com.blackcrowsys.ui.residentbio.ResidentBioActivityViewModel
 import com.blackcrowsys.ui.residents.ResidentsActivityViewModel
 import com.blackcrowsys.ui.splash.SplashActivityViewModel
 import com.blackcrowsys.util.SchedulerProvider
@@ -52,6 +53,13 @@ class ViewModelFactory @Inject constructor(
                 exceptionTransformer
             ) as T
             modelClass.isAssignableFrom(ResidentsActivityViewModel::class.java) -> ResidentsActivityViewModel(
+                schedulerProvider,
+                residentRepository,
+                aesCipher,
+                sharedPreferencesHandler,
+                exceptionTransformer
+            ) as T
+            modelClass.isAssignableFrom(ResidentBioActivityViewModel::class.java) -> ResidentBioActivityViewModel(
                 schedulerProvider,
                 residentRepository,
                 aesCipher,

@@ -7,9 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.blackcrowsys.R
 import com.blackcrowsys.persistence.entity.Resident
+import com.blackcrowsys.ui.residentbio.ResidentBioActivity
 import kotlinx.android.synthetic.main.resident_rv_item.view.*
 
-class ResidentsAdapter :
+class ResidentsAdapter(val pin: String) :
     ListAdapter<Resident, ResidentsAdapter.ResidentViewHolder>(ResidentDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ResidentViewHolder {
@@ -22,7 +23,7 @@ class ResidentsAdapter :
         holder.bindResident(getItem(position))
     }
 
-    class ResidentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    inner class ResidentViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         fun bindResident(resident: Resident) = with(resident) {
             if (imageUrl.isNotBlank()) {
@@ -30,6 +31,10 @@ class ResidentsAdapter :
             }
             itemView.tvResidentName.text =
                     itemView.context.getString(R.string.name_placeholder, firstName, surname)
+
+            itemView.setOnClickListener {
+                ResidentBioActivity.startResidentBioActivity(itemView.context, pin, resident.residentId)
+            }
         }
     }
 }

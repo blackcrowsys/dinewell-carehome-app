@@ -12,7 +12,6 @@ import com.blackcrowsys.util.SharedPreferencesHandler
 import com.blackcrowsys.util.ViewState
 import io.reactivex.Flowable
 import io.reactivex.Observable
-import io.reactivex.Single
 import io.reactivex.schedulers.Schedulers
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -76,8 +75,8 @@ class ResidentsActivityViewModelTest {
 
         mockDecryptCalls()
 
-        `when`(mockResidentRepository.getResidentsFromApi(JWT_TOKEN)).thenReturn(
-            Single.just(
+        `when`(mockResidentRepository.getResidents(JWT_TOKEN)).thenReturn(
+            Flowable.just(
                 MockContentHelper.provideListResidents()
             )
         )
@@ -95,8 +94,8 @@ class ResidentsActivityViewModelTest {
 
         mockDecryptCalls()
 
-        `when`(mockResidentRepository.getResidentsFromApi(JWT_TOKEN)).thenReturn(
-            Single.error(UnknownHostException())
+        `when`(mockResidentRepository.getResidents(JWT_TOKEN)).thenReturn(
+            Flowable.error(UnknownHostException())
         )
 
         residentsActivityViewModel.getLatestResidentList(PIN)

@@ -57,6 +57,8 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    androidTestImplementation "android.arch.core:core-testing:1.1.1"
+    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     implementation "com.android.support:design:$rootProject.supportLibraryVersion"
     implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
     implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
@@ -78,7 +80,7 @@ dependencies {
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation "com.squareup.okhttp3:okhttp:$rootProject.okhttpVersion"
     implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.okhttpVersion"
-    implementation 'com.google.code.gson:gson:2.8.0'
+    implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation "com.google.dagger:dagger:$rootProject.daggerVersion"
     kapt "com.google.dagger:dagger-compiler:$rootProject.daggerVersion"
@@ -91,13 +93,11 @@ dependencies {
     implementation "com.facebook.fresco:fresco:1.7.1"
 
     implementation "com.github.rs146:Pinview:1.0.1"
-
     implementation "com.github.douglasjunior:android-simple-tooltip:0.2.2"
 
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.2'
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-inline:2.11.0'
     testImplementation "org.robolectric:robolectric:3.6.1"
 }
-

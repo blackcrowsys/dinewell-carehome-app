@@ -8,6 +8,7 @@ import com.blackcrowsys.security.AESCipher
 import com.blackcrowsys.util.SchedulerProvider
 import com.blackcrowsys.util.SharedPreferencesHandler
 import com.blackcrowsys.util.ViewState
+import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.rxkotlin.subscribeBy
@@ -35,9 +36,10 @@ class ResidentsActivityViewModel(
         compositeDisposable.add(
             sharedPreferencesHandler.getEncryptedJwtToken()
                 .map { aesCipher.decrypt(pin, it) }
-                .flatMapSingle { residentRepository.getResidentsFromApi(it) }
-                .compose(schedulerProvider.getSchedulersForObservable())
-                .compose(exceptionTransformer.mapExceptionsForObservable())
+                .toFlowable(BackpressureStrategy.BUFFER)
+                .flatMap { residentRepository.getResidents(it) }
+                .compose(schedulerProvider.getSchedulersForFlowable())
+                .compose(exceptionTransformer.mapExceptionsForFlowable())
                 .subscribeBy(onNext = {
                     latestResidentsListState.value = ViewState.Success(it)
                 }, onError = {
