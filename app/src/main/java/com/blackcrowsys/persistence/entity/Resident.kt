@@ -20,4 +20,6 @@ data class Resident(
         residentResponse.imageUrl,
         residentResponse.room
     )
+
+    fun displayName(): String = "$firstName $surname"
 }

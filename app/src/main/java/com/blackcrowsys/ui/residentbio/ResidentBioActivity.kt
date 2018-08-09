@@ -4,12 +4,14 @@ import android.arch.lifecycle.Observer
 import android.arch.lifecycle.ViewModelProviders
 import android.content.Context
 import android.content.Intent
+import android.databinding.DataBindingUtil
 import android.os.Bundle
 import android.support.design.widget.TabLayout
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import com.blackcrowsys.R
+import com.blackcrowsys.databinding.ActivityResidentBioBinding
 import com.blackcrowsys.persistence.entity.Resident
 import com.blackcrowsys.ui.ViewModelFactory
 import com.blackcrowsys.util.Constants.PIN_EXTRA
@@ -38,11 +40,12 @@ class ResidentBioActivity : AppCompatActivity() {
 
     private lateinit var bioPagerAdapter: ResidentBioPagerAdapter
     private lateinit var residentBioActivityViewModel: ResidentBioActivityViewModel
+    private lateinit var binding: ActivityResidentBioBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_resident_bio)
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_resident_bio)
 
         val allergiesTitle = getString(R.string.allergies)
         val incidentsTitle = getString(R.string.incidents)
@@ -92,8 +95,7 @@ class ResidentBioActivity : AppCompatActivity() {
             is ViewState.Success<*> -> {
                 val resident = viewState.data as Resident
                 ivResidentBioImage.setImageURI(resident.imageUrl)
-                tvResidentBioName.text = getString(R.string.name_placeholder, resident.firstName, resident.surname)
-                tvResidentBioRoom.text = getString(R.string.room_building_placeholder, resident.room)
+                binding.resident = resident
             }
             is ViewState.Error -> {
                 Log.e("ResidentBioActivity", viewState.throwable.message)
